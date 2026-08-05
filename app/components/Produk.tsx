@@ -10,6 +10,11 @@ function formatRupiah(angka: number) {
 
 export default async function ProdukPage() {
   const supabase = await createClient();
+  const session = await supabase.auth.getSession();
+
+  if (!session.data.session) {
+    redirect("/login");
+  }
 
   // Fetch Data
   const { data: produk, error } = await supabase
@@ -49,11 +54,19 @@ export default async function ProdukPage() {
   async function tambahKeranjang(productId: string) {
     "use server";
     const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      redirect("/login");
+    }
 
     const { data: itemAda } = await supabase
       .from("keranjang")
       .select("id, jumlah")
       .eq("produk_id", productId)
+      .eq("user_id", user.id)
       .maybeSingle();
 
     let err;

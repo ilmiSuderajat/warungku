@@ -1,10 +1,17 @@
 import { createClient } from "@/utils/supabase/server";
+import { redirect } from "next/navigation";
 
 export default async function keranjangPage() {
   const supabase = await createClient();
+  const session = await supabase.auth.getSession();
+
+  if (!session.data.session) {
+    redirect("/login?error=login_keranjang");
+  }
   const { data: keranjang, error } = await supabase
     .from("keranjang")
-    .select("id,jumlah,produk_mitra(id,nama_produk,harga)");
+    .select("id,jumlah,produk_mitra(id,nama_produk,harga)")
+    .eq("user_id", session.data.session.user.id);
 
   if (error) {
     return <div>Error dari Supabase: {JSON.stringify(error)}</div>;

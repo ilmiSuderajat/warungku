@@ -11,17 +11,17 @@ export default function SearchBar() {
   const totalItem = getTotalKeranjang();
 
   return (
-    <div className="w-full h-20 grid grid-rows-3 md:grid-rows-4 md:w-[80%] md:mx-auto shadow-lg ">
+    <div className="w-full h-20 grid grid-rows-3 md:grid-rows-4 md:w-[80%] md:mx-auto  ">
       <div className="h-20 px-3 py-2 row-span-1 flex items-center justify-center bg-indigo-800 ">
         <h1 className="text-white font-bold text-3xl hidden md:block mr-8 font-['Sacramento']">
           WarungKita
         </h1>
         <input
-          className="bg-white w-[80%] h-[60%] text-center rounded-sm indigo-700 text-gray-800 placeholder:text-indigo-300 border-none focus:outline-none md:w-[60%] md:h-[70%]"
+          className="bg-white w-[80%] h-[70%] text-center rounded-sm indigo-700 text-gray-800 placeholder:text-indigo-300 border-none focus:outline-none md:w-[60%] md:h-[70%]"
           type="text"
           placeholder="Cari Apakih ..?"
         />
-        <div className="relative inline-block ml-2 md:ml-4">
+        <div className="relative inline-block ml-3 md:ml-4">
           <Link href="/chat">
             <ChatBubbleLeftEllipsisIcon className="w-8 h-8 text-white transition-transform duration-100 ease-in-out active:scale-85" />
           </Link>
