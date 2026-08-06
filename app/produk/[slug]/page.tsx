@@ -1,7 +1,11 @@
 import { createClient } from "@/utils/supabase/server";
+import { getTotalKeranjang } from "@/utils/cart";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
+import Link from "next/link";
 import TombolKeranjang from "@/app/components/TombolKeranjang";
+// import SearchBar from "@/app/components/SearchBar"; // Nonaktifkan jika tidak dipakai di sini
+import { Star, MapPin, Store, Clock, ChevronLeft } from "lucide-react";
 import SearchBar from "@/app/components/SearchBar";
 
 function formatRupiah(angka: number) {
@@ -13,6 +17,7 @@ export default async function DetailProdukPage({
 }: {
   params: { slug: string };
 }) {
+  const totalItem = await getTotalKeranjang();
   const { slug } = await params;
   const supabase = await createClient();
 
@@ -23,9 +28,14 @@ export default async function DetailProdukPage({
     .single();
 
   if (error || !item) {
-    return <div>Produk tidak ditemukan.</div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 text-gray-500">
+        Produk tidak ditemukan.
+      </div>
+    );
   }
 
+  // --- SERVER ACTIONS ---
   async function beliSekarang(formData: FormData) {
     "use server";
     const jumlah = formData.get("jumlah") || "1";
@@ -70,32 +80,94 @@ export default async function DetailProdukPage({
     return !err;
   }
 
+  // --- TAMPILAN (UI) ---
   return (
-    <div className="w-full min-h-screen grid grid-rows-[auto_1fr] bg-gray-50/90">
-      <div className="max-w-2xl mx-auto p-6">
-        <div className="w-full aspect-square bg-gray-50 rounded-xl mb-4 flex items-center justify-center text-gray-300 text-sm">
-          [Gambar Produk]
+    <div className="w-full min-h-screen bg-gray-50 pb-24">
+      {/* Container utama dengan max-width agar tidak terlalu lebar di Desktop */}
+      <div className="max-w-md mx-auto bg-white min-h-screen relative shadow-sm">
+        {/* Tombol Back Mengambang (Floating Back Button) */}
+        <SearchBar totalItem={totalItem} />
+
+        {/* Area Gambar Produk */}
+        <div className="w-full aspect-square bg-gray-200 flex items-center justify-center text-gray-400 text-sm">
+          [Gambar Produk Resolusi Tinggi]
         </div>
 
-        <h1 className="text-xl font-bold text-gray-800">{item.nama_produk}</h1>
-        <p className="text-gray-500 text-sm mt-1">Stok: {item.stok}</p>
-        <p className="text-indigo-600 font-bold text-lg mt-2">
-          Rp {formatRupiah(item.harga)}
-        </p>
+        {/* Area Konten Detail */}
+        <div className="p-5">
+          {/* Header Konten: Judul & Harga */}
+          <div className="flex justify-between items-start gap-4 mb-3">
+            <h1 className="text-xl md:text-2xl font-bold text-gray-800 leading-tight">
+              {item.nama_produk}
+            </h1>
+            <p className="text-indigo-600 font-bold text-xl whitespace-nowrap">
+              Rp {formatRupiah(item.harga)}
+            </p>
+          </div>
 
-        <div className="flex flex-col gap-2 mt-6">
-          <form action={beliSekarang}>
-            <input type="hidden" name="productId" value={item.id} />
-            <input type="hidden" name="jumlah" value="1" />
-            <button
-              type="submit"
-              className="w-full bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold py-2 rounded-xl active:scale-95 transition-transform"
-            >
-              Beli Sekarang
-            </button>
-          </form>
+          {/* Meta Info (Rating, Terjual, Stok) */}
+          <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600 mb-5 border-b border-gray-100 pb-5">
+            <div className="flex items-center gap-1 font-medium text-amber-500">
+              <Star size={16} className="fill-amber-500" />
+              <span>4.8</span>
+            </div>
+            <span className="w-1 h-1 rounded-full bg-gray-300"></span>
+            <span>150+ Penilaian</span>
+            <span className="w-1 h-1 rounded-full bg-gray-300"></span>
+            <span>Stok: {item.stok}</span>
+          </div>
 
-          <TombolKeranjang action={tambahKeranjang.bind(null, item.id)} />
+          {/* Info Mitra / Toko */}
+          <div className="flex items-center gap-3 mb-6 bg-gray-50 p-3 rounded-xl border border-gray-100">
+            <div className="w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600">
+              <Store size={20} />
+            </div>
+            <div className="flex-1">
+              <p className="font-semibold text-gray-800 text-sm">
+                Mitra UMKM Warden
+              </p>
+              <div className="flex items-center gap-2 text-xs text-gray-500 mt-0.5">
+                <span className="flex items-center gap-0.5">
+                  <MapPin size={12} /> 1.2 km
+                </span>
+                <span>•</span>
+                <span className="flex items-center gap-0.5">
+                  <Clock size={12} /> 10-15 mnt
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Area Deskripsi */}
+          <div>
+            <h3 className="font-bold text-gray-800 mb-2">Deskripsi Produk</h3>
+            <p className="text-gray-600 text-sm leading-relaxed">
+              {item.deskripsi ||
+                "Belum ada deskripsi untuk produk ini. Disiapkan langsung dengan bahan segar ketika Anda memesan. Nikmati jajanan lokal terbaik dengan pengiriman instan."}
+            </p>
+          </div>
+        </div>
+
+        {/* --- FIXED BOTTOM BAR (Area Tombol Checkout) --- */}
+        <div className="fixed bottom-0 left-0 w-full bg-white border-t border-gray-100 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-50 p-4">
+          <div className="max-w-md mx-auto flex flex-row items-center justify-between gap-4">
+            {/* Tombol Keranjang */}
+            <div className="w-[20%]">
+              <TombolKeranjang action={tambahKeranjang.bind(null, item.id)} />
+            </div>
+
+            {/* Tombol Beli Langsung */}
+            <form action={beliSekarang} className="flex-1">
+              <input type="hidden" name="productId" value={item.id} />
+              <input type="hidden" name="jumlah" value="1" />
+              <button
+                type="submit"
+                className="w-[80%] bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-xl active:scale-95 transition-all shadow-sm shadow-indigo-200"
+              >
+                Beli Sekarang
+              </button>
+            </form>
+          </div>
         </div>
       </div>
     </div>

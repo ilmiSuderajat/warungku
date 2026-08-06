@@ -1,14 +1,20 @@
+import { getTotalKeranjang } from "@/utils/cart";
+import BannerPromo from "./components/BannerPromo";
 import DataKeranjang from "./components/DataKeranjang";
+import KategoriCard from "./components/KategoriCard";
 import Produk from "./components/Produk";
 import SearchBar from "./components/SearchBar";
 import TopCard from "./components/TopCard";
 import ProdukPage from "./produk/page";
-export default function Home() {
+export default async function Home() {
+  const totalItem = await getTotalKeranjang();
   return (
     <div className="w-full min-h-screen bg-gray-50/90 ">
-      <SearchBar />
-      <div className="w-full md:w-[80%] md:mx-auto  ">
+      <SearchBar totalItem={totalItem} />
+      <div className="w-full md:w-[80%] md:mx-auto ">
         <TopCard />
+        <KategoriCard />
+        <BannerPromo />
       </div>
       <div>
         <ProdukPage />
