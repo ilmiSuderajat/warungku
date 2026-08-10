@@ -17,6 +17,7 @@ export function ProdukGambarSlider({
   const ref = useRef<HTMLDivElement>(null);
   const dragStartX = useRef(0);
   const isDragging = useRef(false);
+  const autoSlideRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -27,16 +28,30 @@ export function ProdukGambarSlider({
     if (ref.current) observer.observe(ref.current);
     return () => observer.disconnect();
   }, []);
-
   useEffect(() => {
+    if (autoSlideRef.current) {
+      clearInterval(autoSlideRef.current);
+      autoSlideRef.current = null;
+    }
+
     if (!isVisible || isFullscreen || !urls || urls.length <= 1) return;
 
-    const interval = setInterval(() => {
-      setIndex((prev) => (prev + 1) % urls.length);
-    }, 3000);
+    const randomDelay = Math.random() * 3000; // 0-2 detik biar gak barengan
 
-    return () => clearInterval(interval);
-  }, [isVisible, isFullscreen, urls?.length]);
+    const timeout = setTimeout(() => {
+      autoSlideRef.current = setInterval(() => {
+        setIndex((prev) => (prev + 1) % urls.length);
+      }, 3000);
+    }, randomDelay);
+
+    return () => {
+      clearTimeout(timeout);
+      if (autoSlideRef.current) {
+        clearInterval(autoSlideRef.current);
+        autoSlideRef.current = null;
+      }
+    };
+  }, [isVisible, isFullscreen, urls]);
 
   function goNext() {
     setIndex((prev) => (prev + 1) % urls.length);
@@ -91,7 +106,7 @@ export function ProdukGambarSlider({
     <>
       <div
         ref={ref}
-        className="w-full h-full relative overflow-hidden cursor-pointer"
+        className="relative h-full w-full cursor-pointer overflow-hidden bg-transparent"
         onClick={openFullscreen}
       >
         <div
@@ -103,13 +118,13 @@ export function ProdukGambarSlider({
               key={i}
               src={url}
               loading="lazy"
-              className="w-full h-full object-cover shrink-0"
+              className="block h-full w-full shrink-0 object-cover"
             />
           ))}
         </div>
 
         {urls.length > 1 && (
-          <div className="absolute bottom-2 flex gap-1 z-10">
+          <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1 z-10 justify-center items-center">
             {urls.map((_, i) => (
               <span
                 key={i}
@@ -147,7 +162,7 @@ export function ProdukGambarSlider({
           </button>
 
           {urls.length > 1 && (
-            <div className="absolute bottom-6 flex gap-2">
+            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2">
               {urls.map((_, i) => (
                 <span
                   key={i}

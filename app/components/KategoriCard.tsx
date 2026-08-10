@@ -83,7 +83,7 @@ export default function KategoriCard() {
   };
 
   return (
-    <div className="w-[96%] max-w-2xl mx-auto mt-1 bg-white rounded-xl shadow-sm border border-gray-100 py-3 px-3">
+    <div className="w-[96%] max-w-2xl mx-auto mt-1 bg-white/95 rounded-xl shadow-sm border border-gray-100 py-3 px-3">
       <h2 className="text-sm font-bold text-gray-800 mb-3 px-1">
         Eksplor Jajanan
       </h2>
@@ -93,7 +93,7 @@ export default function KategoriCard() {
         ref={scrollRef}
         onScroll={handleScroll}
         // Ditambahkan snap-x agar pergeseran lebih mulus dan presisi
-        className="flex overflow-x-auto snap-x snap-mandatory gap-4 pb-2"
+        className="flex overflow-x-auto snap-x snap-mandatory gap-2"
         style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
       >
         <style jsx>{`
@@ -112,7 +112,7 @@ export default function KategoriCard() {
               onClick={() => console.log(`Filter kategori: ${cat.name}`)}
             >
               <div
-                className={`w-14 h-14 rounded-full flex items-center justify-center ${cat.bg} ${cat.color}`}
+                className={`w-10 h-10 rounded-full flex items-center justify-center ${cat.bg} ${cat.color}`}
               >
                 <Icon size={26} strokeWidth={2} />
               </div>

@@ -96,37 +96,67 @@ export default function SearchBar({ totalItem = 0 }: { totalItem?: number }) {
     );
   }
   return (
-    <div className="w-full h-20 grid grid-rows-3 md:grid-rows-4 md:w-[80%] md:mx-auto">
-      <div className="h-[9dvh] px-3 py-2 row-span-1 flex items-center justify-center bg-indigo-800 ">
-        <h1 className="text-white font-bold text-3xl hidden md:block mr-8 font-['Sacramento']">
+    <div className="w-full bg-indigo-800 shadow-md sticky top-0 z-50">
+      {/* Inner Container: Dibatasi lebarnya agar rapi di layar besar */}
+      <div className="flex items-center gap-4 px-4 py-3 md:px-6 max-w-7xl mx-auto h-16 md:h-20">
+        {/* Logo */}
+        <h1 className="text-white font-bold text-3xl hidden md:block shrink-0 mr-2 font-['Sacramento']">
           WarungKita
         </h1>
-        <input
-          className="bg-white w-[80%] h-[70%] text-center shadow-lg rounded-sm text-gray-800 placeholder:text-indigo-300 border-none focus:outline-none md:w-[60%] md:h-[70%]"
-          type="text"
-          placeholder="Cari Apakih ..?"
-        />
-        <div className="relative inline-block ml-3 md:ml-4">
-          <Link href="/chat">
-            <ChatBubbleLeftEllipsisIcon className="w-8 h-8 text-white transition-transform duration-100 ease-in-out active:scale-95" />
-          </Link>
-          <p
-            id="countChat"
-            className="absolute -top-1 -right-1 bg-white text-indigo-700 text-xs font-bold rounded-full h-4 w-4 flex items-center justify-center md:h-5 md:w-5 md:text-sm md:-top-2 md:right-0.5"
+
+        {/* Wrapper Search Bar (flex-1 agar otomatis mengisi ruang) */}
+        <div className="relative flex-1 max-w-4xl">
+          <input
+            className="w-full bg-white px-4 py-2.5 pl-11 rounded-lg text-gray-800 text-sm md:text-base placeholder:text-gray-400 border border-transparent focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-indigo-400/30 transition-all shadow-sm"
+            type="text"
+            placeholder="Cari Apakih ..?"
+          />
+          {/* Icon Search Bawaan (SVG) ditaruh di dalam input */}
+          <svg
+            className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
           >
-            0
-          </p>
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+            />
+          </svg>
         </div>
-        <div className="relative inline-block ml-2 md:ml-4 ">
-          <Link href="/keranjang">
-            <ShoppingCartIcon className="w-8 h-8 text-white transition-transform duration-100 ease-in-out active:scale-95" />
-          </Link>
-          <p
-            id="count"
-            className="absolute -top-1 -right-1 bg-white text-indigo-700 text-xs font-bold rounded-full h-4 w-4 flex items-center justify-center md:h-5 md:w-5 md:text-sm md:-top-2 md:right-0.5"
-          >
-            {totalItem}
-          </p>
+
+        {/* Area Ikon Chat & Keranjang */}
+        <div className="flex items-center gap-5 shrink-0 ml-2">
+          {/* Ikon Chat */}
+          <div className="relative inline-block">
+            <Link href="/chat">
+              <ChatBubbleLeftEllipsisIcon className="w-7 h-7 md:w-8 md:h-8 text-white transition-transform duration-100 ease-in-out active:scale-95 hover:text-indigo-200" />
+            </Link>
+            {/* Badge Notif - Diubah jadi merah ala e-commerce */}
+            <p
+              id="countChat"
+              className="absolute -top-1.5 -right-2 bg-red-500 text-white border-2 border-indigo-800 text-[10px] font-bold rounded-full h-5 w-5 flex items-center justify-center md:text-xs"
+            >
+              0
+            </p>
+          </div>
+
+          {/* Ikon Keranjang */}
+          <div className="relative inline-block">
+            <Link href="/keranjang">
+              <ShoppingCartIcon className="w-7 h-7 md:w-8 md:h-8 text-white transition-transform duration-100 ease-in-out active:scale-95 hover:text-indigo-200" />
+            </Link>
+            {/* Badge Notif */}
+            <p
+              id="count"
+              className="absolute -top-1.5 -right-2 bg-red-500 text-white border-2 border-indigo-800 text-[10px] font-bold rounded-full h-5 w-5 flex items-center justify-center md:text-xs"
+            >
+              {totalItem}
+            </p>
+          </div>
         </div>
       </div>
     </div>

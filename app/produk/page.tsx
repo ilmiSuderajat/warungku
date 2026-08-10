@@ -30,55 +30,60 @@ export default async function ProdukPage() {
   }
 
   return (
-    <div className="max-w-6xl mx-auto p-4 md:p-6 ">
-      <div className="grid grid-cols-2 h-24 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-5">
+    <div className="max-w-6xl mx-auto p-4 md:p-6">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-5">
         {produk.map((item) => (
           <Link
             key={item.id}
             href={`/produk/${item.slug}`}
-            className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300 rounded-2xl p-3 md:p-4 flex flex-col h-full group"
+            className="bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col h-full group"
           >
-            {/* Placeholder Gambar */}
-            <div className="w-full aspect-square bg-gray-200 relative overflow-hidden">
+            {/* Area Gambar */}
+            <div className="w-full aspect-square relative overflow-hidden bg-gray-50">
               <ProdukGambarSlider urls={item.gambar_urls} />
 
-              {/* Dummy Badge Promo */}
-              <div className="absolute top-2 left-2 bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full z-10">
-                Promo
+              {/* Badge Promo */}
+              <div className="absolute top-2 left-0 bg-red-500 text-white text-[10px] md:text-xs font-bold px-2 py-0.5 rounded-r-md z-10 shadow-sm">
+                PROMO
               </div>
             </div>
 
-            {/* Info Produk */}
-            <div className="grow flex flex-col">
-              <h2 className="font-semibold text-gray-800 text-sm md:text-base line-clamp-2 leading-tight group-hover:text-indigo-600 transition-colors">
+            {/* Area Info Produk */}
+            <div className="p-3 flex flex-col grow">
+              {/* JUDUL PRODUK - Diperbarui */}
+              {/* Menggunakan font-medium, text-gray-900, dan leading-tight agar lebih tegas namun tetap elegan */}
+              <h2 className="text-[12px] leading-[1.3] text-gray-800 line-clamp-2 mb-1.5 font-medium">
                 {item.nama_produk}
               </h2>
 
-              {/* Rating Bintang & Terjual (Dummy) */}
-              <div className="flex items-center gap-1.5 mt-1.5 text-[11px] md:text-xs text-gray-500">
-                <div className="flex items-center gap-0.5 text-amber-500 font-medium">
-                  <Star size={13} className="fill-amber-500 text-amber-500" />
-                  <span>4.8</span>
+              {/* Harga */}
+              <div className="mb-2">
+                <p className="text-red-600 font-bold text-base md:text-lg leading-none">
+                  Rp {formatRupiah(item.harga)}
+                </p>
+              </div>
+
+              {/* Area Bawah (Jarak, Rating, Stok) */}
+              <div className="mt-auto flex flex-col gap-1.5">
+                {/* Jarak (Dummy) */}
+                <div className="flex items-center gap-1 text-[10px] md:text-xs text-gray-500">
+                  <MapPin size={12} className="text-gray-400 shrink-0" />
+                  <span className="truncate">1.2 km • 10 mnt</span>
                 </div>
-                <span className="w-1 h-1 rounded-full bg-gray-300"></span>
-                <span>150+ terjual</span>
-              </div>
 
-              {/* Jarak (Dummy) */}
-              <div className="flex items-center gap-1 mt-1 text-[11px] md:text-xs text-gray-500">
-                <MapPin size={12} className="text-emerald-500" />
-                <span>1.2 km • 10 mnt</span>
-              </div>
+                {/* Rating, Terjual & Stok */}
+                <div className="flex items-center justify-between text-[10px] md:text-xs text-gray-500">
+                  <div className="flex items-center gap-1">
+                    <Star
+                      size={12}
+                      className="fill-amber-400 text-amber-400 shrink-0"
+                    />
+                    <span className="text-gray-700">4.8</span>
+                    <span className="w-0.5 h-0.5 rounded-full bg-gray-400 mx-0.5"></span>
+                    <span>150+ terjual</span>
+                  </div>
 
-              {/* Harga & Stok */}
-              <div className="mt-3 flex items-end justify-between mb-1">
-                <div>
-                  <p className="text-gray-400 text-[10px] mb-0.5">
-                    Stok: {item.stok}
-                  </p>
-                  <p className="text-red-400 font-bold text-base md:text-lg leading-none">
-                    Rp {formatRupiah(item.harga)}
-                  </p>
+                  <span className="text-gray-400">Stok: {item.stok}</span>
                 </div>
               </div>
             </div>
