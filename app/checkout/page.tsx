@@ -2,7 +2,7 @@ import { createClient } from "@/utils/supabase/server";
 import { revalidatePath } from "next/cache";
 import FormCheckout from "@/app/components/FormCheckout";
 import { redirect } from "next/navigation";
-import { toast } from "sonner";
+
 export default async function CheckoutPage({
   searchParams,
 }: {
@@ -18,6 +18,7 @@ export default async function CheckoutPage({
   if (!user) {
     redirect("/login?error=belum_login");
   }
+
   const { data: produk, error } = await supabase
     .from("produk_mitra")
     .select("*")
@@ -28,6 +29,18 @@ export default async function CheckoutPage({
     return <div>Produk tidak ditemukan.</div>;
   }
 
+  // Cek alamat utama SEBELUM render, biar user diarahkan lebih dulu kalau belum ada
+  const { data: alamatUtama } = await supabase
+    .from("alamat")
+    .select("id, label, alamat_lengkap")
+    .eq("user_id", user.id)
+    .eq("is_utama", true)
+    .single();
+
+  if (!alamatUtama) {
+    redirect("/alamat?error=belum_ada_alamat");
+  }
+
   async function prosesBayar(jumlah: number) {
     "use server";
     const supabaseServer = await createClient();
@@ -35,13 +48,14 @@ export default async function CheckoutPage({
     const { data, error } = await supabaseServer.rpc("buat_pesanan", {
       p_produk_id: produk.id,
       p_jumlah: jumlah,
+      p_alamat_id: alamatUtama?.id,
     });
 
     if (error) {
       console.error("Gagal:", error.message);
       return {
         success: false,
-        message: "Gagal Membuat Pessanan : " + error.message,
+        message: "Gagal Membuat Pesanan: " + error.message,
       };
     }
     revalidatePath("/checkout");
@@ -70,6 +84,10 @@ export default async function CheckoutPage({
         </p>
         <p>
           <strong>Stok Tersedia:</strong> {produk.stok}
+        </p>
+        <p>
+          <strong>Dikirim ke:</strong> {alamatUtama.label} -{" "}
+          {alamatUtama.alamat_lengkap}
         </p>
       </div>
 

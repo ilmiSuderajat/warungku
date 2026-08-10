@@ -23,12 +23,20 @@ export async function tambahProduk(
   namaProduk: string,
   harga: number,
   stok: number,
+  gambarUrl: String[],
 ) {
   const slug = await generateUniqueSlug(supabase, namaProduk);
 
   const { data, error } = await supabase
     .from("produk_mitra")
-    .insert({ toko_id: tokoId, nama_produk: namaProduk, harga, stok, slug })
+    .insert({
+      toko_id: tokoId,
+      nama_produk: namaProduk,
+      harga,
+      stok,
+      slug,
+      gambar_urls: gambarUrl,
+    })
     .select();
 
   return { data, error };

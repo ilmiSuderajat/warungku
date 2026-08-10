@@ -10,34 +10,48 @@ export default async function StoreControlCard() {
 
   if (!user) return null;
 
-  // Ambil status toko mitra dari tabel profiles / mitra
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("is_open")
-    .eq("id", user.id)
+  // Ambil status toko mitra langsung dari tabel toko_mitra
+  const { data: toko } = await supabase
+    .from("toko_mitra")
+    .select("is_buka")
+    .eq("pemilik_id", user.id)
     .single();
 
-  const isOpen = profile?.is_open ?? true;
+  const isOpen = toko?.is_buka ?? true;
 
   async function toggleStore() {
     "use server";
     const sb = await createClient();
+
     const {
       data: { user },
     } = await sb.auth.getUser();
-    if (!user) return;
 
-    const { data: currentProfile } = await sb
-      .from("profiles")
-      .select("is_open")
-      .eq("id", user.id)
+    if (!user) {
+      throw new Error("Unauthorized");
+    }
+
+    const { data: currentProfile, error: fetchError } = await sb
+      .from("toko_mitra")
+      .select("is_buka")
+      .eq("pemilik_id", user.id)
       .single();
-    const currentStatus = currentProfile?.is_open ?? true;
 
-    await sb
-      .from("profiles")
-      .update({ is_open: !currentStatus })
-      .eq("id", user.id);
+    if (fetchError || !currentProfile) {
+      throw new Error("Profil toko tidak ditemukan");
+    }
+
+    const { error: updateError } = await sb
+      .from("toko_mitra")
+      .update({
+        is_buka: !currentProfile.is_buka,
+      })
+      .eq("pemilik_id", user.id);
+
+    if (updateError) {
+      throw new Error(updateError.message);
+    }
+
     revalidatePath("/mitra");
   }
 

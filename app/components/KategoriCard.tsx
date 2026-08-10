@@ -83,7 +83,7 @@ export default function KategoriCard() {
   };
 
   return (
-    <div className="w-[96%] max-w-2xl mx-auto mt-2 bg-white rounded-xl shadow-sm border border-gray-100 py-3 px-3">
+    <div className="w-[96%] max-w-2xl mx-auto mt-1 bg-white rounded-xl shadow-sm border border-gray-100 py-3 px-3">
       <h2 className="text-sm font-bold text-gray-800 mb-3 px-1">
         Eksplor Jajanan
       </h2>

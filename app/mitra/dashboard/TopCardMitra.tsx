@@ -1,9 +1,14 @@
 import { createClient } from "@/utils/supabase/server";
-import { Banknote, Clock3, ShoppingBag, Store } from "lucide-react";
+import { Banknote, BoxIcon, Clock3, ShoppingBag, Store } from "lucide-react";
+import { getTotalProdukMitra } from "../produk/totalProduk";
+import {
+  getTokoMitra,
+  getPendapatanHariIni,
+  getPesananAktif,
+} from "../viewModel/viewModel";
 
 export default async function TopCardMitra() {
   const supabase = await createClient();
-
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -16,18 +21,30 @@ export default async function TopCardMitra() {
     );
   }
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("is_open")
-    .eq("id", user.id)
-    .single();
+  const toko = await getTokoMitra(supabase, user.id);
 
-  const pendapatanHariIni = 145000;
-  const pesananAktif = 3;
-  const isOpen = profile?.is_open ?? true;
+  if (!toko) {
+    return (
+      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <p className="text-sm text-slate-500">Toko tidak ditemukan.</p>
+      </div>
+    );
+  }
+
+  const produk = await getTotalProdukMitra();
+  const pendapatanHariIni = await getPendapatanHariIni(supabase, user.id);
+  const pesananAktif = await getPesananAktif(supabase, toko.id);
+  const isOpen = toko.is_buka ?? true;
+
   const stats = [
     {
-      label: "Pendapatan Hari Ini",
+      label: "Total Produk",
+      value: `${produk}`,
+      icon: BoxIcon,
+      tone: "bg-emerald-50 text-emerald-700 ring-emerald-100",
+    },
+    {
+      label: "Pendapatan Hari ini",
       value: `Rp ${pendapatanHariIni.toLocaleString("id-ID")}`,
       icon: Banknote,
       tone: "bg-emerald-50 text-emerald-700 ring-emerald-100",
@@ -80,7 +97,6 @@ export default async function TopCardMitra() {
       <div className="mt-5 grid grid-cols-1 gap-3 md:grid-cols-3">
         {stats.map((stat) => {
           const Icon = stat.icon;
-
           return (
             <div
               key={stat.label}

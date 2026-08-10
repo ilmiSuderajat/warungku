@@ -16,7 +16,7 @@ export default async function Home() {
         <KategoriCard />
         <BannerPromo />
       </div>
-      <div>
+      <div className="">
         <ProdukPage />
       </div>
     </div>

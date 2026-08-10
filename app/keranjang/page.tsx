@@ -12,7 +12,6 @@ export default async function keranjangPage() {
     .from("keranjang")
     .select("id,jumlah,produk_mitra(id,nama_produk,harga)")
     .eq("user_id", session.data.session.user.id);
-
   if (error) {
     return <div>Error dari Supabase: {JSON.stringify(error)}</div>;
   }

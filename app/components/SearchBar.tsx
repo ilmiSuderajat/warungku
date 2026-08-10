@@ -97,7 +97,7 @@ export default function SearchBar({ totalItem = 0 }: { totalItem?: number }) {
   }
   return (
     <div className="w-full h-20 grid grid-rows-3 md:grid-rows-4 md:w-[80%] md:mx-auto">
-      <div className="h-[8dvh] px-3 py-2 row-span-1 flex items-center justify-center bg-indigo-800 ">
+      <div className="h-[9dvh] px-3 py-2 row-span-1 flex items-center justify-center bg-indigo-800 ">
         <h1 className="text-white font-bold text-3xl hidden md:block mr-8 font-['Sacramento']">
           WarungKita
         </h1>

@@ -28,8 +28,8 @@ export default async function TopCard() {
   const saldo = wallet?.balance || 0;
 
   return (
-    <div className="w-[96%] max-w-2xl mx-auto bg-gray-50 rounded-lg shadow-lg py-2 px-2">
-      <div className="h-[20%] mb-1 grid grid-cols-4 gap-2">
+    <div className="w-[96%] max-w-2xl mx-auto mt-1 bg-white rounded-lg shadow-lg py-2 px-2">
+      <div className="h-[20%] grid grid-cols-4 gap-2">
         {/* Item 1: Wallet */}
         <Link
           href="/wallet"

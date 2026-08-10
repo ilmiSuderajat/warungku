@@ -4,9 +4,9 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import Link from "next/link";
 import TombolKeranjang from "@/app/components/TombolKeranjang";
-// import SearchBar from "@/app/components/SearchBar"; // Nonaktifkan jika tidak dipakai di sini
 import { Star, MapPin, Store, Clock, ChevronLeft } from "lucide-react";
 import SearchBar from "@/app/components/SearchBar";
+import GaleriProduk from "@/app/components/GaleriProduk";
 
 function formatRupiah(angka: number) {
   return new Intl.NumberFormat("id-ID").format(angka);
@@ -35,7 +35,6 @@ export default async function DetailProdukPage({
     );
   }
 
-  // --- SERVER ACTIONS ---
   async function beliSekarang(formData: FormData) {
     "use server";
     const jumlah = formData.get("jumlah") || "1";
@@ -75,27 +74,37 @@ export default async function DetailProdukPage({
       });
       err = error;
     }
-
     revalidatePath("/");
     return !err;
   }
 
-  // --- TAMPILAN (UI) ---
   return (
     <div className="w-full min-h-screen bg-gray-50 pb-24">
-      {/* Container utama dengan max-width agar tidak terlalu lebar di Desktop */}
       <div className="max-w-md mx-auto bg-white min-h-screen relative shadow-sm">
-        {/* Tombol Back Mengambang (Floating Back Button) */}
         <SearchBar totalItem={totalItem} />
 
-        {/* Area Gambar Produk */}
-        <div className="w-full aspect-square bg-gray-200 flex items-center justify-center text-gray-400 text-sm">
-          [Gambar Produk Resolusi Tinggi]
-        </div>
+        <GaleriProduk urls={item.gambar_urls}>
+          <div className="fixed bottom-0 left-0 w-full bg-white border-t border-gray-100 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-50 p-4">
+            <div className="max-w-md mx-auto flex flex-row items-center justify-between gap-4">
+              <div className="w-[20%]">
+                <TombolKeranjang action={tambahKeranjang.bind(null, item.id)} />
+              </div>
 
-        {/* Area Konten Detail */}
+              <form action={beliSekarang} className="flex-1">
+                <input type="hidden" name="productId" value={item.id} />
+                <input type="hidden" name="jumlah" value="1" />
+                <button
+                  type="submit"
+                  className="w-[80%] bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-xl active:scale-95 transition-all shadow-sm shadow-indigo-200"
+                >
+                  Beli Sekarang
+                </button>
+              </form>
+            </div>
+          </div>
+        </GaleriProduk>
+
         <div className="p-5">
-          {/* Header Konten: Judul & Harga */}
           <div className="flex justify-between items-start gap-4 mb-3">
             <h1 className="text-xl md:text-2xl font-bold text-gray-800 leading-tight">
               {item.nama_produk}
@@ -105,7 +114,6 @@ export default async function DetailProdukPage({
             </p>
           </div>
 
-          {/* Meta Info (Rating, Terjual, Stok) */}
           <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600 mb-5 border-b border-gray-100 pb-5">
             <div className="flex items-center gap-1 font-medium text-amber-500">
               <Star size={16} className="fill-amber-500" />
@@ -117,7 +125,6 @@ export default async function DetailProdukPage({
             <span>Stok: {item.stok}</span>
           </div>
 
-          {/* Info Mitra / Toko */}
           <div className="flex items-center gap-3 mb-6 bg-gray-50 p-3 rounded-xl border border-gray-100">
             <div className="w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600">
               <Store size={20} />
@@ -138,35 +145,12 @@ export default async function DetailProdukPage({
             </div>
           </div>
 
-          {/* Area Deskripsi */}
           <div>
             <h3 className="font-bold text-gray-800 mb-2">Deskripsi Produk</h3>
             <p className="text-gray-600 text-sm leading-relaxed">
               {item.deskripsi ||
                 "Belum ada deskripsi untuk produk ini. Disiapkan langsung dengan bahan segar ketika Anda memesan. Nikmati jajanan lokal terbaik dengan pengiriman instan."}
             </p>
-          </div>
-        </div>
-
-        {/* --- FIXED BOTTOM BAR (Area Tombol Checkout) --- */}
-        <div className="fixed bottom-0 left-0 w-full bg-white border-t border-gray-100 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-50 p-4">
-          <div className="max-w-md mx-auto flex flex-row items-center justify-between gap-4">
-            {/* Tombol Keranjang */}
-            <div className="w-[20%]">
-              <TombolKeranjang action={tambahKeranjang.bind(null, item.id)} />
-            </div>
-
-            {/* Tombol Beli Langsung */}
-            <form action={beliSekarang} className="flex-1">
-              <input type="hidden" name="productId" value={item.id} />
-              <input type="hidden" name="jumlah" value="1" />
-              <button
-                type="submit"
-                className="w-[80%] bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-xl active:scale-95 transition-all shadow-sm shadow-indigo-200"
-              >
-                Beli Sekarang
-              </button>
-            </form>
           </div>
         </div>
       </div>
