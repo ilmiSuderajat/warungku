@@ -129,7 +129,7 @@ export default function SearchBar({ totalItem = 0 }: { totalItem?: number }) {
         </div>
 
         {/* Area Ikon Chat & Keranjang */}
-        <div className="flex items-center gap-5 shrink-0 ml-2">
+        <div className="flex items-center gap-4 shrink-0 ">
           {/* Ikon Chat */}
           <div className="relative inline-block">
             <Link href="/chat">
