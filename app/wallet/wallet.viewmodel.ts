@@ -6,6 +6,7 @@ export type Wallet = {
   balance: number | null;
   user_id: string;
   created_at?: string | null;
+  updated_at?: string | null;
 };
 
 export type WalletTransaction = {
@@ -15,6 +16,8 @@ export type WalletTransaction = {
   status: string | null;
   reference_id: string | null;
   created_at: string | null;
+  jumlah_kotor?: number | null;
+  komisi?: number | null;
 };
 
 export type WalletViewModel = {
@@ -50,7 +53,10 @@ export function formatTransactionDate(value: string | null | undefined) {
   return dateTimeFormatter.format(new Date(value));
 }
 
-export async function getWalletViewModel(user: User, limitTransactions: number): Promise<WalletViewModel> {
+export async function getWalletViewModel(
+  user: User,
+  limitTransactions: number = 8
+): Promise<WalletViewModel> {
   const supabase = await createClient();
 
   const { data: wallet } = await supabase
@@ -65,10 +71,10 @@ export async function getWalletViewModel(user: User, limitTransactions: number):
   if (wallet?.id) {
     const { data, error } = await supabase
       .from("wallet_transactions")
-      .select("id,type,amount,status,reference_id,created_at")
+      .select("id,type,amount,status,reference_id,created_at,jumlah_kotor,komisi")
       .eq("wallet_id", wallet.id)
       .order("created_at", { ascending: false })
-      .limit(limitTransactions=8)
+      .limit(limitTransactions)
       .returns<WalletTransaction[]>();
 
     transactions = data ?? [];

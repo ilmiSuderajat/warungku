@@ -17,8 +17,8 @@ export default async function CheckoutPage({
   searchParams,
 }: {
   searchParams:
-    | Promise<{ productId?: string; source?: string; jumlah?: string }>
-    | { productId?: string; source?: string; jumlah?: string };
+  | Promise<{ productId?: string; source?: string; jumlah?: string }>
+  | { productId?: string; source?: string; jumlah?: string };
 }) {
   const params = await searchParams;
   const source = params.source ?? "langsung";
@@ -103,9 +103,10 @@ export default async function CheckoutPage({
     totalTagihan = produk.harga;
     maxStok = produk.stok;
   }
-
   async function prosesBayar(jumlahDariForm: number) {
     "use server";
+    // Hapus import { redirect } dari file ini jika sudah tidak dipakai
+
     const supabaseServer = await createClient();
 
     if (source === "keranjang") {
@@ -129,7 +130,11 @@ export default async function CheckoutPage({
       }
     }
 
-    redirect("/pesanan?status=sukses");
+    // ❌ HAPUS BARIS INI
+    // redirect("/pesanan?status=sukses");
+
+    // ✅ GANTI MENJADI SEPERTI INI
+    return { success: true, message: "Pesanan berhasil dibuat!" };
   }
 
   return (

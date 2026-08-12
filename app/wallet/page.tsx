@@ -9,6 +9,20 @@ import {
   getWalletViewModel,
   type WalletTransaction,
 } from "./wallet.viewmodel";
+import {
+  Wallet as WalletIcon,
+  ArrowDownLeft,
+  ArrowUpRight,
+  History,
+  PlusCircle,
+  ShieldCheck,
+  CreditCard,
+  Store,
+  Clock,
+  CheckCircle2,
+  XCircle,
+  Send,
+} from "lucide-react";
 
 function getInitial(email?: string) {
   return email?.trim().charAt(0).toUpperCase() || "U";
@@ -16,46 +30,103 @@ function getInitial(email?: string) {
 
 function StatusBadge({ status }: { status: string | null }) {
   const normalizedStatus = status?.toLowerCase() ?? "unknown";
-  const className =
-    normalizedStatus === "success"
-      ? "bg-emerald-50 text-emerald-700 ring-emerald-600/15"
-      : normalizedStatus === "pending"
-        ? "bg-amber-50 text-amber-700 ring-amber-600/15"
-        : "bg-slate-100 text-slate-600 ring-slate-600/10";
+  switch (normalizedStatus) {
+    case "success":
+      return (
+        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700">
+          <CheckCircle2 className="w-3 h-3" />
+          Berhasil
+        </span>
+      );
+    case "pending":
+      return (
+        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-700">
+          <Clock className="w-3 h-3" />
+          Pending
+        </span>
+      );
+    case "failed":
+      return (
+        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-red-100 text-red-600">
+          <XCircle className="w-3 h-3" />
+          Gagal
+        </span>
+      );
+    default:
+      return (
+        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-gray-100 text-gray-500">
+          {status ?? "Unknown"}
+        </span>
+      );
+  }
+}
 
-  return (
-    <span
-      className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium ring-1 ring-inset ${className}`}
-    >
-      {status ?? "Unknown"}
-    </span>
-  );
+function getTransactionMeta(type: string | null, amount: number) {
+  const t = type?.toLowerCase() ?? "";
+  if (t === "topup") {
+    return {
+      label: "Top Up Saldo",
+      icon: ArrowDownLeft,
+      iconBg: "bg-emerald-100 text-emerald-700",
+      amountColor: "text-emerald-700",
+      prefix: "+",
+    };
+  }
+  if (t === "penjualan") {
+    return {
+      label: "Hasil Penjualan",
+      icon: Store,
+      iconBg: "bg-emerald-100 text-emerald-700",
+      amountColor: "text-emerald-700",
+      prefix: "+",
+    };
+  }
+  if (t === "withdrawal") {
+    return {
+      label: "Penarikan Saldo",
+      icon: WalletIcon,
+      iconBg: "bg-amber-100 text-amber-700",
+      amountColor: "text-red-600",
+      prefix: "-",
+    };
+  }
+  return {
+    label: "Pembayaran Pesanan",
+    icon: CreditCard,
+    iconBg: "bg-indigo-100 text-indigo-600",
+    amountColor: "text-red-600",
+    prefix: "-",
+  };
 }
 
 function TransactionRow({ transaction }: { transaction: WalletTransaction }) {
   const amount = transaction.amount ?? 0;
-  const isIncome = amount >= 0 || transaction.type?.toLowerCase() === "topup";
+  const meta = getTransactionMeta(transaction.type, amount);
+  const IconComponent = meta.icon;
 
   return (
-    <li className="flex items-center justify-between gap-4 border-b border-slate-100 py-4 last:border-0">
-      <div className="min-w-0">
-        <p className="truncate text-sm font-semibold text-slate-950">
-          {transaction.type ?? "Transaksi wallet"}
-        </p>
-        <p className="mt-1 truncate text-xs text-slate-500">
-          {transaction.reference_id ?? "Tanpa referensi"} -{" "}
-          {formatTransactionDate(transaction.created_at)}
-        </p>
-      </div>
-      <div className="shrink-0 text-right">
-        <p
-          className={`text-sm font-bold ${
-            isIncome ? "text-emerald-700" : "text-rose-700"
-          }`}
+    <li className="flex items-center justify-between gap-3 py-3 border-b border-gray-200 last:border-0">
+      <div className="flex items-center gap-3 min-w-0">
+        <div
+          className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${meta.iconBg}`}
         >
-          {formatCurrency(amount)}
+          <IconComponent className="w-4 h-4" />
+        </div>
+        <div className="min-w-0 space-y-0.5">
+          <p className="text-xs sm:text-sm font-bold text-gray-900 truncate">
+            {meta.label}
+          </p>
+          <p className="text-xs text-gray-500 truncate">
+            {formatTransactionDate(transaction.created_at)}
+          </p>
+        </div>
+      </div>
+
+      <div className="shrink-0 text-right space-y-1">
+        <p className={`text-xs sm:text-sm font-bold ${meta.amountColor}`}>
+          {meta.prefix} {formatCurrency(Math.abs(amount))}
         </p>
-        <div className="mt-1">
+        <div>
           <StatusBadge status={transaction.status} />
         </div>
       </div>
@@ -73,130 +144,154 @@ export default async function WalletPage() {
     redirect("/login");
   }
 
-  const viewModel = await getWalletViewModel(user, 8); // Limit transaksi terbaru yang ditampilkan
+  const viewModel = await getWalletViewModel(user, 5);
   const walletId = viewModel.wallet?.id;
 
   return (
-    <main className="min-h-screen bg-slate-50 text-slate-950">
-      <section className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-4 py-6 sm:px-6 lg:px-8">
-        <header className="flex flex-col gap-4 rounded-lg border border-slate-200 bg-white px-5 py-4 shadow-sm sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex min-w-0 items-center gap-3">
-            <div className="grid size-11 shrink-0 place-items-center rounded-full bg-slate-950 text-sm font-bold text-white">
+    <main className="min-h-screen bg-gray-50 pb-24">
+      <div className="max-w-2xl mx-auto px-4 py-5 space-y-4">
+        {/* User Profile Bar */}
+        <header className="bg-white shadow-lg rounded-lg border border-gray-100 p-5 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="w-10 h-10 rounded-full bg-indigo-600 text-white font-bold text-sm flex items-center justify-center shrink-0">
               {getInitial(viewModel.user.email)}
             </div>
-            <div className="min-w-0">
-              <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
-                Warungku Wallet
-              </p>
-              <h1 className="truncate text-xl font-bold text-slate-950">
+            <div className="min-w-0 space-y-0.5">
+              <div className="flex items-center gap-1.5">
+                <p className="text-xs font-semibold text-gray-500">
+                  E-Wallet WarungKita
+                </p>
+                <span className="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700">
+                  <ShieldCheck className="w-3 h-3" />
+                  Aktif
+                </span>
+              </div>
+              <h1 className="text-sm sm:text-base font-bold text-gray-900 truncate">
                 {viewModel.user.email}
               </h1>
             </div>
           </div>
-          <div className="flex items-center gap-3">
-            <Link
-              href="/wallet/transaction"
-              className="rounded-md border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-slate-400 hover:bg-slate-100"
-            >
-              Riwayat
-            </Link>
+
+          <div className="shrink-0">
             <LogoutButton />
           </div>
         </header>
 
-        <div className="grid gap-6 lg:grid-cols-[1.35fr_0.65fr]">
-          <section className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
-            <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
-              <div>
-                <p className="text-sm font-medium text-slate-500">
-                  Saldo tersedia
-                </p>
-                <p className="mt-3 text-4xl font-bold tracking-normal text-slate-950 sm:text-5xl">
-                  {viewModel.balanceLabel}
-                </p>
-                <p className="mt-3 text-sm text-slate-500">
-                  Update terakhir: {viewModel.lastTransactionLabel}
-                </p>
-              </div>
-              <div className="rounded-lg border border-slate-200 bg-slate-50 p-4 md:w-64">
-                <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
-                  Wallet ID
-                </p>
-                <p className="mt-2 break-all font-mono text-xs text-slate-700">
-                  {walletId ?? "Wallet belum tersedia"}
-                </p>
-              </div>
+        {/* Saldo Hero Card (Solid Indigo, No Gradient, No Backdrop Blur) */}
+        <section className="bg-indigo-600 text-white shadow-lg rounded-lg p-5 space-y-4">
+          <div className="space-y-1">
+            <div className="flex items-center justify-between text-indigo-100 text-xs font-medium">
+              <span>Saldo Utama</span>
+              <span>ID: {walletId ? `${walletId.slice(0, 8)}...` : "-"}</span>
             </div>
+            <p className="text-2xl sm:text-3xl font-bold tracking-tight">
+              {viewModel.balanceLabel}
+            </p>
+          </div>
 
-            <div className="mt-8 grid gap-3 sm:grid-cols-3">
-              <div className="rounded-lg border border-slate-200 p-4">
-                <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
-                  Status
-                </p>
-                <p className="mt-2 text-sm font-semibold text-emerald-700">
-                  Aktif
-                </p>
+          {/* Quick Action Navigation Buttons */}
+          <div className="grid grid-cols-4 gap-2 pt-3 border-t border-indigo-500">
+            <a
+              href="#topup-section"
+              className="flex flex-col items-center gap-1 p-2 rounded-lg bg-indigo-700 hover:bg-indigo-800 transition-all text-center"
+            >
+              <div className="w-8 h-8 rounded-full bg-white text-indigo-600 flex items-center justify-center">
+                <PlusCircle className="w-4 h-4" />
               </div>
-              <div className="rounded-lg border border-slate-200 p-4">
-                <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
-                  Bergabung
-                </p>
-                <p className="mt-2 text-sm font-semibold text-slate-800">
-                  {viewModel.joinedLabel}
-                </p>
-              </div>
-              <div className="rounded-lg border border-slate-200 p-4">
-                <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
-                  Transaksi tampil
-                </p>
-                <p className="mt-2 text-sm font-semibold text-slate-800">
-                  {viewModel.transactions.length} terbaru
-                </p>
-              </div>
-            </div>
-          </section>
+              <span className="text-xs font-semibold text-white">Top Up</span>
+            </a>
 
-          <aside className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
-            <div className="mb-5">
-              <h2 className="text-lg font-bold text-slate-950">Top up saldo</h2>
-              <p className="mt-1 text-sm text-slate-500">
-                Masukkan nominal yang ingin ditambahkan ke wallet.
-              </p>
-            </div>
-            {walletId ? (
-              <TopUpForm walletId={walletId} />
-            ) : (
-              <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
-                Wallet belum ditemukan untuk akun ini.
-              </div>
-            )}
-          </aside>
-        </div>
-
-        <section className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <h2 className="text-lg font-bold text-slate-950">
-                Transaksi terbaru
-              </h2>
-              <p className="mt-1 text-sm text-slate-500">
-                Aktivitas wallet yang paling baru tercatat.
-              </p>
-            </div>
             <Link
               href="/wallet/transaction"
-              className="text-sm font-semibold text-slate-700 underline-offset-4 hover:underline"
+              className="flex flex-col items-center gap-1 p-2 rounded-lg bg-indigo-700 hover:bg-indigo-800 transition-all text-center"
             >
-              Lihat semua
+              <div className="w-8 h-8 rounded-full bg-white text-indigo-600 flex items-center justify-center">
+                <Send className="w-4 h-4" />
+              </div>
+              <span className="text-xs font-semibold text-white">Transfer</span>
+            </Link>
+
+            <Link
+              href="/mitra"
+              className="flex flex-col items-center gap-1 p-2 rounded-lg bg-indigo-700 hover:bg-indigo-800 transition-all text-center"
+            >
+              <div className="w-8 h-8 rounded-full bg-white text-indigo-600 flex items-center justify-center">
+                <ArrowUpRight className="w-4 h-4" />
+              </div>
+              <span className="text-xs font-semibold text-white">Tarik</span>
+            </Link>
+
+            <Link
+              href="/wallet/transaction"
+              className="flex flex-col items-center gap-1 p-2 rounded-lg bg-indigo-700 hover:bg-indigo-800 transition-all text-center"
+            >
+              <div className="w-8 h-8 rounded-full bg-white text-indigo-600 flex items-center justify-center">
+                <History className="w-4 h-4" />
+              </div>
+              <span className="text-xs font-semibold text-white">Riwayat</span>
+            </Link>
+          </div>
+        </section>
+
+        {/* Section Top Up Saldo Component */}
+        <section
+          id="topup-section"
+          className="bg-white shadow-lg rounded-lg border border-gray-100 p-5 space-y-4"
+        >
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center shrink-0">
+              <PlusCircle className="w-4 h-4" />
+            </div>
+            <div>
+              <h2 className="text-sm sm:text-base font-bold text-gray-900">
+                Top Up Saldo
+              </h2>
+              <p className="text-xs text-gray-500">
+                Pilih nominal cepat atau ketik nominal top up Anda.
+              </p>
+            </div>
+          </div>
+
+          {walletId ? (
+            <TopUpForm walletId={walletId} />
+          ) : (
+            <div className="p-3 rounded-lg bg-red-50 border border-red-200 text-xs font-semibold text-red-600">
+              Wallet belum tersedia untuk akun ini.
+            </div>
+          )}
+        </section>
+
+        {/* Section Riwayat Transaksi Component */}
+        <section className="bg-white shadow-lg rounded-lg border border-gray-100 p-5 space-y-4">
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center shrink-0">
+                <History className="w-4 h-4" />
+              </div>
+              <div>
+                <h2 className="text-sm sm:text-base font-bold text-gray-900">
+                  Riwayat Transaksi
+                </h2>
+                <p className="text-xs text-gray-500">
+                  5 aktivitas dompet terbaru.
+                </p>
+              </div>
+            </div>
+
+            <Link
+              href="/wallet/transaction"
+              className="text-xs font-bold text-indigo-600 hover:text-indigo-700 flex items-center gap-0.5"
+            >
+              Lihat Semua
             </Link>
           </div>
 
           {viewModel.transactionsError ? (
-            <div className="mt-5 rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
-              Transaksi belum bisa dimuat: {viewModel.transactionsError}
+            <div className="p-3 rounded-lg bg-red-50 border border-red-200 text-xs font-semibold text-red-600">
+              Gagal memuat transaksi: {viewModel.transactionsError}
             </div>
           ) : viewModel.transactions.length > 0 ? (
-            <ul className="mt-3 divide-y divide-slate-100">
+            <ul className="space-y-1">
               {viewModel.transactions.map((transaction) => (
                 <TransactionRow
                   key={transaction.id}
@@ -205,18 +300,18 @@ export default async function WalletPage() {
               ))}
             </ul>
           ) : (
-            <div className="mt-5 rounded-lg border border-dashed border-slate-300 p-8 text-center">
-              <p className="text-sm font-semibold text-slate-700">
-                Belum ada transaksi
+            <div className="p-6 rounded-lg border border-dashed border-gray-200 text-center space-y-2">
+              <WalletIcon className="w-8 h-8 text-gray-500 mx-auto" />
+              <p className="text-xs sm:text-sm font-bold text-gray-900">
+                Belum Ada Transaksi
               </p>
-              <p className="mt-1 text-sm text-slate-500">
-                Setelah top up atau pembayaran berhasil, riwayat akan muncul di
-                sini.
+              <p className="text-xs text-gray-500 max-w-xs mx-auto">
+                Riwayat transaksi wallet Anda akan otomatis muncul di sini.
               </p>
             </div>
           )}
         </section>
-      </section>
+      </div>
     </main>
   );
 }

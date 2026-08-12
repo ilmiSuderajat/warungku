@@ -3,12 +3,18 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
+import { PlusCircle, Loader2 } from "lucide-react";
 
 type TopUpFormProps = {
   walletId: string;
 };
 
 const minimumAmount = 1_000;
+const presetAmounts = [10_000, 25_000, 50_000, 100_000, 250_000, 500_000];
+
+function formatRupiah(angka: number) {
+  return new Intl.NumberFormat("id-ID").format(angka);
+}
 
 export default function TopUpForm({ walletId }: TopUpFormProps) {
   const [amount, setAmount] = useState("");
@@ -47,21 +53,45 @@ export default function TopUpForm({ walletId }: TopUpFormProps) {
     }
 
     setAmount("");
-    setSuccess("Top up berhasil diproses.");
+    setSuccess("Top up saldo berhasil diproses!");
     router.refresh();
   }
 
   return (
     <form className="space-y-4" onSubmit={handleTopUp}>
-      <div>
+      {/* Quick Amount Preset Chips */}
+      <div className="space-y-2">
+        <label className="text-xs font-semibold text-gray-500">
+          Pilih Nominal Cepat
+        </label>
+        <div className="grid grid-cols-3 gap-2">
+          {presetAmounts.map((preset) => (
+            <button
+              key={preset}
+              type="button"
+              onClick={() => setAmount(preset.toString())}
+              className={`py-2 px-3 text-xs font-semibold rounded-lg border transition-all ${
+                amount === preset.toString()
+                  ? "bg-indigo-600 text-white border-indigo-600"
+                  : "bg-white text-gray-900 border-gray-200 hover:border-indigo-600"
+              }`}
+            >
+              Rp {formatRupiah(preset)}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Manual Input */}
+      <div className="space-y-1">
         <label
           htmlFor="top-up-amount"
-          className="text-sm font-semibold text-slate-700"
+          className="text-xs font-semibold text-gray-500"
         >
-          Nominal
+          Atau Masukkan Nominal Lain
         </label>
-        <div className="mt-2 flex overflow-hidden rounded-md border border-slate-300 bg-white shadow-sm focus-within:border-slate-500 focus-within:ring-2 focus-within:ring-slate-200">
-          <span className="flex items-center border-r border-slate-200 bg-slate-50 px-3 text-sm font-semibold text-slate-500">
+        <div className="flex items-center rounded-lg border border-gray-200 bg-white overflow-hidden focus-within:border-indigo-600">
+          <span className="bg-gray-50 px-3 py-2.5 text-xs font-semibold text-gray-500 border-r border-gray-200">
             Rp
           </span>
           <input
@@ -69,33 +99,44 @@ export default function TopUpForm({ walletId }: TopUpFormProps) {
             type="number"
             min={minimumAmount}
             step="1000"
-            placeholder="50000"
+            placeholder="Contoh: 50.000"
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
             disabled={loading}
             required
-            className="min-w-0 flex-1 border-0 px-3 py-2.5 text-sm text-slate-950 outline-none placeholder:text-slate-400 disabled:cursor-not-allowed disabled:bg-slate-50"
+            className="w-full px-3 py-2.5 text-sm text-gray-900 focus:outline-none placeholder:text-gray-500"
           />
         </div>
       </div>
 
       {error && (
-        <p className="rounded-md border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-700">
+        <div className="p-3 rounded-lg bg-red-50 border border-red-200 text-xs font-semibold text-red-600">
           {error}
-        </p>
+        </div>
       )}
+
       {success && (
-        <p className="rounded-md border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-700">
+        <div className="p-3 rounded-lg bg-emerald-50 border border-emerald-200 text-xs font-semibold text-emerald-700">
           {success}
-        </p>
+        </div>
       )}
 
       <button
         type="submit"
         disabled={loading}
-        className="w-full rounded-md bg-slate-950 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-400"
+        className="w-full inline-flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm py-3 rounded-lg transition-all disabled:opacity-50"
       >
-        {loading ? "Memproses..." : "Top up sekarang"}
+        {loading ? (
+          <>
+            <Loader2 className="w-4 h-4 animate-spin" />
+            Memproses...
+          </>
+        ) : (
+          <>
+            <PlusCircle className="w-4 h-4" />
+            Konfirmasi Top Up Saldo
+          </>
+        )}
       </button>
     </form>
   );
