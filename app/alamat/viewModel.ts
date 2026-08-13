@@ -16,36 +16,19 @@ export async function tambahAlamat(
   userId: string,
   label: string,
   alamatLengkap: string,
+  namaLokasi: string,
   isUtama: boolean,
-  koordinat: { lat: number; lng: number } | null,
+  koordinat: { lat: number; lng: number },
 ) {
-  // Kalau alamat baru ditandai utama, alamat lama yang utama perlu di-nonaktifkan dulu
-  if (isUtama) {
-    await supabase
-      .from("alamat")
-      .update({ is_utama: false })
-      .eq("user_id", userId)
-      .eq("is_utama", true);
-  }
-
-  // Siapkan data yang akan di-insert
-  const payload: any = {
-    user_id: userId,
-    label,
-    alamat_lengkap: alamatLengkap,
-    is_utama: isUtama,
-  };
-
-  // Jika koordinat ada (user mengklik peta), masukkan ke payload
-  if (koordinat) {
-    payload.latitude = koordinat.lat;
-    payload.longitude = koordinat.lng;
-  }
-
-  const { data, error } = await supabase
-    .from("alamat")
-    .insert(payload)
-    .select();
+  const { data, error } = await supabase.rpc("simpan_alamat_dan_sumbang", {
+    p_user_id: userId,
+    p_label: label,
+    p_nama_alamat: namaLokasi,   // ini yang disumbang ke lokasi_referensi
+    p_alamat_lengkap: alamatLengkap,
+    p_is_utama: isUtama,
+    p_lat: koordinat.lat,
+    p_lng: koordinat.lng,
+  });
 
   return { data, error };
 }
@@ -55,13 +38,11 @@ export async function setAlamatUtama(
   userId: string,
   alamatId: string,
 ) {
-  // Setel semua alamat user menjadi non-utama lebih dulu
   await supabase
     .from("alamat")
     .update({ is_utama: false })
     .eq("user_id", userId);
 
-  // Setel alamat pilihan menjadi utama
   const { data, error } = await supabase
     .from("alamat")
     .update({ is_utama: true })
@@ -86,3 +67,15 @@ export async function hapusAlamat(
   return { error };
 }
 
+export async function cariLokasiTerdekat(
+  supabase: SupabaseClient,
+  lat: number,
+  lng: number,
+) {
+  const { data, error } = await supabase.rpc("cari_lokasi_terdekat", {
+    p_lat: lat,
+    p_lng: lng,
+  });
+
+  return { data: data ?? [], error };
+}

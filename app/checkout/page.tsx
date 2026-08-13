@@ -130,20 +130,16 @@ export default async function CheckoutPage({
       }
     }
 
-    // ❌ HAPUS BARIS INI
-    // redirect("/pesanan?status=sukses");
-
-    // ✅ GANTI MENJADI SEPERTI INI
     return { success: true, message: "Pesanan berhasil dibuat!" };
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-6 md:py-10">
+    <div className="min-h-screen bg-gray-50/90 py-6 md:py-10">
       <div className="max-w-2xl mx-auto px-4 md:px-0">
         <h1 className="text-2xl font-bold text-gray-900 mb-6">Checkout</h1>
 
         {/* 1. CARD ALAMAT PENGIRIMAN */}
-        <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm mb-4">
+        <div className="bg-white/90 p-5 rounded-xl border border-gray-200 mb-1">
           <div className="flex items-center gap-2 mb-3 text-gray-800 font-bold border-b border-gray-100 pb-3">
             <MapPin className="w-5 h-5 text-indigo-600" />
             <h2>Alamat Pengiriman</h2>
@@ -157,7 +153,7 @@ export default async function CheckoutPage({
         </div>
 
         {/* 2. CARD RINGKASAN PESANAN */}
-        <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm mb-4">
+        <div className="bg-white/90 p-5 rounded-xl border border-gray-200 mb-1">
           <div className="flex items-center gap-2 mb-4 text-gray-800 font-bold border-b border-gray-100 pb-3">
             <ShoppingBag className="w-5 h-5 text-indigo-600" />
             <h2>Pesanan Anda</h2>
@@ -170,11 +166,8 @@ export default async function CheckoutPage({
                 className="flex justify-between items-start gap-4"
               >
                 <div className="flex-1">
-                  <p className="font-medium text-gray-800 line-clamp-2 leading-snug">
-                    {item.nama_produk}
-                  </p>
                   <p className="text-sm text-gray-500 mt-1">
-                    {item.jumlah_beli} item x Rp{" "}
+                    {item.jumlah_beli} {item.nama_produk} x Rp{" "}
                     {item.harga.toLocaleString("id-ID")}
                   </p>
                 </div>

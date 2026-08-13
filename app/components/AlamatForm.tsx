@@ -1,6 +1,8 @@
 import { useState, useEffect, FormEvent } from "react";
 import dynamic from "next/dynamic";
 import { MapPin, User, Phone, FileText, Tag, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
+import { createClient } from "@/utils/supabase/client";
+import { cariLokasiTerdekat } from "@/app/alamat/viewModel";
 
 const MapPicker = dynamic(() => import("./MapPicker"), { ssr: false });
 
@@ -8,8 +10,9 @@ interface AlamatFormProps {
   onSubmit: (data: {
     label: string;
     alamatLengkap: string;
+    namaLokasi: string;
     isUtama: boolean;
-    koordinat: { lat: number; lng: number } | null;
+    koordinat: { lat: number; lng: number };
   }) => Promise<void>;
   loading: boolean;
 }
@@ -23,6 +26,10 @@ export default function AlamatForm({ onSubmit, loading }: AlamatFormProps) {
   const [isUtama, setIsUtama] = useState(false);
   const [koordinat, setKoordinat] = useState<{ lat: number; lng: number } | null>(null);
   const [isGeocoding, setIsGeocoding] = useState(false);
+  const [namaLokasi, setNamaLokasi] = useState("");
+  const [rekomendasi, setRekomendasi] = useState<any[]>([]);
+
+  const supabase = createClient();
 
   useEffect(() => {
     if (!koordinat) {
@@ -33,18 +40,18 @@ export default function AlamatForm({ onSubmit, loading }: AlamatFormProps) {
     async function ambilNamaJalan() {
       setIsGeocoding(true);
       try {
-        const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
-        if (!apiKey) {
-          setAlamatOtomatis(`Lat: ${koordinat!.lat.toFixed(5)}, Lng: ${koordinat!.lng.toFixed(5)}`);
-          return;
-        }
         const res = await fetch(
-          `https://maps.googleapis.com/maps/api/geocode/json?latlng=${koordinat!.lat},${koordinat!.lng}&key=${apiKey}`,
+          `https://nominatim.openstreetmap.org/reverse?lat=${koordinat!.lat}&lon=${koordinat!.lng}&format=json`,
+          {
+            headers: {
+              "Accept-Language": "id",
+            },
+          }
         );
         const data = await res.json();
 
-        if (data.results && data.results.length > 0) {
-          setAlamatOtomatis(data.results[0].formatted_address);
+        if (data.display_name) {
+          setAlamatOtomatis(data.display_name);
         } else {
           setAlamatOtomatis(`Lat: ${koordinat!.lat.toFixed(5)}, Lng: ${koordinat!.lng.toFixed(5)}`);
         }
@@ -59,19 +66,39 @@ export default function AlamatForm({ onSubmit, loading }: AlamatFormProps) {
     ambilNamaJalan();
   }, [koordinat]);
 
+  useEffect(() => {
+    if (!koordinat) {
+      setRekomendasi([]);
+      return;
+    }
+
+    async function muatRekomendasi() {
+      const { data } = await cariLokasiTerdekat(supabase, koordinat!.lat, koordinat!.lng);
+      setRekomendasi(data);
+    }
+
+    muatRekomendasi();
+  }, [koordinat]);
+
+  async function handlePilihRekomendasi(lokasi: { latitude: number; longitude: number; nama_lokasi: string }) {
+    setKoordinat({ lat: lokasi.latitude, lng: lokasi.longitude });
+    setNamaLokasi(lokasi.nama_lokasi);
+  }
+
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    if (!koordinat || !namaPenerima.trim() || !nomorHp.trim() || !label.trim()) return;
+    if (!koordinat || !namaPenerima.trim() || !nomorHp.trim() || !label.trim() || !namaLokasi.trim()) return;
 
-    let alamatLengkap = alamatOtomatis || `Koordinat: ${koordinat.lat.toFixed(5)}, ${koordinat.lng.toFixed(5)}`;
+    let alamatLengkap = `${namaLokasi}${alamatOtomatis ? ` (${alamatOtomatis})` : ""}`;
     if (detailAlamat.trim()) {
-      alamatLengkap += ` (${detailAlamat.trim()})`;
+      alamatLengkap += ` - ${detailAlamat.trim()}`;
     }
     alamatLengkap += ` | Penerima: ${namaPenerima.trim()} (${nomorHp.trim()})`;
 
     await onSubmit({
       label: label.trim(),
       alamatLengkap,
+      namaLokasi: namaLokasi.trim(),
       isUtama,
       koordinat,
     });
@@ -81,11 +108,15 @@ export default function AlamatForm({ onSubmit, loading }: AlamatFormProps) {
     setNomorHp("");
     setAlamatOtomatis("");
     setDetailAlamat("");
+    setNamaLokasi("");
     setIsUtama(false);
     setKoordinat(null);
+    setRekomendasi([]);
   }
 
-  const isFormValid = Boolean(koordinat && namaPenerima.trim() && nomorHp.trim() && label.trim());
+  const isFormValid = Boolean(
+    koordinat && namaPenerima.trim() && nomorHp.trim() && label.trim() && namaLokasi.trim()
+  );
 
   return (
     <form className="space-y-6" onSubmit={handleSubmit}>
@@ -106,7 +137,6 @@ export default function AlamatForm({ onSubmit, loading }: AlamatFormProps) {
 
         <MapPicker position={koordinat} setPosition={setKoordinat} />
 
-        {/* Status Lokasi Terdeteksi */}
         {koordinat ? (
           <div className="mt-4 rounded-2xl border border-indigo-100 bg-indigo-50/60 p-4">
             <div className="flex items-start gap-3">
@@ -115,15 +145,43 @@ export default function AlamatForm({ onSubmit, loading }: AlamatFormProps) {
                 <p className="text-xs font-semibold uppercase tracking-wider text-indigo-800">
                   Lokasi Terdeteksi
                 </p>
+
                 {isGeocoding ? (
                   <p className="mt-1 flex items-center gap-2 text-sm text-indigo-600">
                     <Loader2 className="h-4 w-4 animate-spin" />
                     Mencari alamat lokasi...
                   </p>
                 ) : (
-                  <p className="mt-1 text-sm font-medium text-slate-800">
-                    {alamatOtomatis || `Lat: ${koordinat.lat.toFixed(5)}, Lng: ${koordinat.lng.toFixed(5)}`}
-                  </p>
+                  <>
+                    <input
+                      type="text"
+                      required
+                      value={namaLokasi}
+                      onChange={(e) => setNamaLokasi(e.target.value)}
+                      placeholder={alamatOtomatis || "Contoh: Gang Rawa RT.1/3"}
+                      className="mt-1 w-full rounded-xl border border-indigo-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+                    />
+                    <p className="mt-1 text-xs text-slate-500">
+                      Isi nama jalan/gang atau RT/RW agar lokasi ini bisa membantu pengguna lain menemukan alamat serupa.
+                    </p>
+
+                    {rekomendasi.length > 0 && (
+                      <div className="mt-3 space-y-1.5">
+                        <p className="text-xs font-medium text-slate-500">Lokasi terdekat yang pernah disimpan:</p>
+                        {rekomendasi.map((lokasi, i) => (
+                          <button
+                            key={i}
+                            type="button"
+                            onClick={() => handlePilihRekomendasi(lokasi)}
+                            className="block w-full rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-left text-xs text-slate-700 transition hover:border-indigo-300 hover:bg-indigo-50"
+                          >
+                            📍 {lokasi.nama_lokasi}{" "}
+                            <span className="text-slate-400">({Math.round(lokasi.jarak_meter)}m)</span>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </>
                 )}
               </div>
             </div>
@@ -218,11 +276,10 @@ export default function AlamatForm({ onSubmit, loading }: AlamatFormProps) {
                 key={lbl}
                 type="button"
                 onClick={() => setLabel(lbl)}
-                className={`inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-medium transition ${
-                  label === lbl
-                    ? "bg-indigo-600 text-white shadow-sm"
-                    : "border border-slate-300 bg-white text-slate-700 hover:border-slate-400"
-                }`}
+                className={`inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-medium transition ${label === lbl
+                  ? "bg-indigo-600 text-white shadow-sm"
+                  : "border border-slate-300 bg-white text-slate-700 hover:border-slate-400"
+                  }`}
               >
                 <Tag className="h-3.5 w-3.5" />
                 {lbl}
@@ -267,4 +324,3 @@ export default function AlamatForm({ onSubmit, loading }: AlamatFormProps) {
     </form>
   );
 }
-

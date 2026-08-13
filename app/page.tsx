@@ -9,7 +9,7 @@ import ProdukPage from "./produk/page";
 export default async function Home() {
   const totalItem = await getTotalKeranjang();
   return (
-    <div className="w-full  bg-gray-50 ">
+    <div className="w-full  bg-gray-50/90 ">
       <SearchBar totalItem={totalItem} />
       <div className="w-full md:w-[80%] md:mx-auto ">
         <TopCard />

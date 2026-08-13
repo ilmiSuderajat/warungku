@@ -31,17 +31,18 @@ export default function AlamatPage() {
   useEffect(() => {
     muatUlang();
   }, []);
-
   async function handleTambahAlamat({
     label,
     alamatLengkap,
+    namaLokasi,
     isUtama,
     koordinat,
   }: {
     label: string;
     alamatLengkap: string;
+    namaLokasi: string;
     isUtama: boolean;
-    koordinat: { lat: number; lng: number } | null;
+    koordinat: { lat: number; lng: number };
   }) {
     const {
       data: { user },
@@ -55,6 +56,7 @@ export default function AlamatPage() {
       user.id,
       label,
       alamatLengkap,
+      namaLokasi,
       isUtama,
       koordinat,
     );
@@ -70,7 +72,6 @@ export default function AlamatPage() {
     setActiveTab("daftar");
     muatUlang();
   }
-
   async function handleSetUtama(alamatId: string) {
     const {
       data: { user },
@@ -178,22 +179,20 @@ export default function AlamatPage() {
         <div className="flex rounded-2xl bg-slate-200/70 p-1 text-xs font-semibold">
           <button
             onClick={() => setActiveTab("daftar")}
-            className={`flex-1 inline-flex items-center justify-center gap-2 rounded-xl py-2.5 transition ${
-              activeTab === "daftar"
-                ? "bg-white text-orange-600 shadow-xs font-bold"
-                : "text-slate-600 hover:text-slate-900"
-            }`}
+            className={`flex-1 inline-flex items-center justify-center gap-2 rounded-xl py-2.5 transition ${activeTab === "daftar"
+              ? "bg-white text-orange-600 shadow-xs font-bold"
+              : "text-slate-600 hover:text-slate-900"
+              }`}
           >
             <MapPin className="w-4 h-4" />
             Daftar Alamat Tersimpan ({alamatList.length})
           </button>
           <button
             onClick={() => setActiveTab("tambah")}
-            className={`flex-1 inline-flex items-center justify-center gap-2 rounded-xl py-2.5 transition ${
-              activeTab === "tambah"
-                ? "bg-white text-orange-600 shadow-xs font-bold"
-                : "text-slate-600 hover:text-slate-900"
-            }`}
+            className={`flex-1 inline-flex items-center justify-center gap-2 rounded-xl py-2.5 transition ${activeTab === "tambah"
+              ? "bg-white text-orange-600 shadow-xs font-bold"
+              : "text-slate-600 hover:text-slate-900"
+              }`}
           >
             <Plus className="w-4 h-4" />
             Tambah Alamat Baru

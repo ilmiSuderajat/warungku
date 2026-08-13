@@ -36,7 +36,7 @@ export default async function ProdukPage() {
           <Link
             key={item.id}
             href={`/produk/${item.slug}`}
-            className="bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col h-full group"
+            className="bg-white/90 border border-gray-200 rounded-xl overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col h-full group"
           >
             {/* Area Gambar */}
             <div className="w-full aspect-square relative overflow-hidden bg-gray-50">

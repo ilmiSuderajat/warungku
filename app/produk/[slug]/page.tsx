@@ -87,14 +87,14 @@ export default async function DetailProdukPage({
 
   return (
     <div className="w-full min-h-screen bg-gray-50 pb-24">
-      <div className="max-w-md mx-auto bg-white min-h-screen relative shadow-sm">
+      <div className="max-w-md mx-auto bg-white min-h-screen relative">
         <SearchBar totalItem={totalItem} />
 
         <div className="relative">
           {/* Back button overlay */}
           <Link
             href="/produk"
-            className="absolute top-3 left-3 z-20 w-9 h-9 rounded-full bg-white/80 backdrop-blur-md border border-white/40 flex items-center justify-center text-gray-700 hover:bg-white active:scale-95 transition-all shadow-sm"
+            className="absolute top-3 left-3 z-20 w-9 h-9 rounded-full bg-white/90 backdrop-blur-md border border-white/40 flex items-center justify-center text-gray-700 hover:bg-white active:scale-95 transition-all "
             aria-label="Kembali"
           >
             <ChevronLeft size={20} />
