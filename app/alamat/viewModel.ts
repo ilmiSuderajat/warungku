@@ -19,15 +19,23 @@ export async function tambahAlamat(
   namaLokasi: string,
   isUtama: boolean,
   koordinat: { lat: number; lng: number },
+  namaPenerima: string,
+  noHp: string,
+  intruksiKhusus: string,
+  detailIntruksi: String,
 ) {
   const { data, error } = await supabase.rpc("simpan_alamat_dan_sumbang", {
     p_user_id: userId,
     p_label: label,
-    p_nama_alamat: namaLokasi,   // ini yang disumbang ke lokasi_referensi
+    p_nama_alamat: namaLokasi, // ini yang disumbang ke lokasi_referensi
     p_alamat_lengkap: alamatLengkap,
     p_is_utama: isUtama,
     p_lat: koordinat.lat,
     p_lng: koordinat.lng,
+    p_nama_penerima: namaPenerima,
+    p_no_hp: noHp,
+    p_intruksi_khusus: intruksiKhusus,
+    p_detail_intruksi: detailIntruksi,
   });
 
   return { data, error };
@@ -78,4 +86,18 @@ export async function cariLokasiTerdekat(
   });
 
   return { data: data ?? [], error };
+}
+
+export async function getSemuaLokasi(supabase: SupabaseClient) {
+  // Hanya melakukan select semua data
+  const { data, error } = await supabase
+    .from("lokasi_referensi")
+    .select("id, nama_lokasi");
+
+  // Opsional: cetak pesan jika error untuk memudahkan proses debug
+  if (error) {
+    console.error("Error mengambil semua lokasi:", error.message);
+  }
+
+  return { data, error };
 }
