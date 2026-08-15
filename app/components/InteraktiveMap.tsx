@@ -2,14 +2,15 @@
 import { useState } from "react";
 import { GoogleMap, useJsApiLoader, Marker } from "@react-google-maps/api";
 import { Bell } from "lucide-react";
+
 interface InteractiveMapProps {
   defaultCenter: {
     lat: number;
     lng: number;
   };
-
   onLocationChange: (coords: { lat: number; lng: number }) => void;
 }
+
 export default function InteractiveMap({
   defaultCenter,
   onLocationChange,
@@ -68,22 +69,24 @@ export default function InteractiveMap({
     );
   };
 
-  if (!isLoaded) return <div className="p-4">Memuat Peta...</div>;
+  if (!isLoaded)
+    return (
+      <div className="p-4 text-sm text-gray-500 text-center bg-gray-100 h-55 flex items-center justify-center">
+        Memuat Peta...
+      </div>
+    );
 
   return (
-    <div className="flex flex-col gap-2">
-      {/* WRAPPER PETA (harus relative agar teks bisa melayang di dalamnya) */}
-      <div className="relative w-full h-[28dvh] rounded-lg overflow-hidden border border-gray-200">
-        {/* TEKS OVERLAY (melayang di atas peta) */}
-        <div className="absolute top-0 left-0 w-full z-10 bg-yellow-50 backdrop-blur-sm px-3 py-2 text-center border-b border-gray-200">
-          <div className="flex items-start ">
-            {/* Ikon dipisah ke div tersendiri agar posisinya stabil */}
-            <div className="shrink-0 mt-0.5 rounded-full p-2 bg-red-400">
-              <Bell className="w-5 h-5 text-yellow-200" />
+    <div className="flex flex-col w-full relative">
+      {/* WRAPPER PETA (Diubah menjadi tinggi fix h-[220px] agar form di bawahnya lega) */}
+      <div className="relative w-full h-55 overflow-hidden bg-gray-200">
+        {/* TEKS OVERLAY (melayang di atas peta, dibuat ala notifikasi UI) */}
+        <div className="absolute top-0 left-0 w-full z-10 bg-white/95 backdrop-blur-sm px-4 py-2.5 shadow-sm border-b border-gray-100">
+          <div className="flex items-center gap-3">
+            <div className="shrink-0 rounded-full p-1.5 bg-orange-50">
+              <Bell className="w-4 h-4 text-orange-500" />
             </div>
-
-            {/* Teks berdiri sendiri */}
-            <p className="text-xs font-semibold text-red-400 leading-snug">
+            <p className="text-[11px] font-medium text-gray-700 leading-snug">
               Mohon periksa pin lokasimu, kami akan mengirimkan pesananmu sesuai
               pin lokasi.
             </p>
@@ -92,38 +95,36 @@ export default function InteractiveMap({
 
         {/* PETA */}
         <GoogleMap
-          mapContainerClassName="w-full h-full rounded-lg" // Ubah menjadi h-full karena tinggi sudah diatur di wrapper parent (h-44)
+          mapContainerClassName="w-full h-full" // Diubah menjadi h-full agar mengikuti wrapper h-[220px]
           center={mapCenter}
           zoom={18}
           onClick={handleMapClick}
           options={{
             mapTypeControl: false,
             streetViewControl: false,
+            fullscreenControl: false,
           }}
         >
           {markerPosition && <Marker position={markerPosition} />}
         </GoogleMap>
       </div>
 
-      {/* TOMBOL */}
-      <div>
+      {/* WRAPPER KONTROL */}
+      <div className="p-3 bg-white border-b border-gray-100 space-y-3">
+        {/* TOMBOL */}
         <button
           onClick={handleCurrentLocation}
           disabled={isLocating}
-          // Saya hapus mt-20 dan tambahkan border agar tombolnya terlihat lebih rapi
-          className="w-full text-indigo-600 font-semibold py-3 px-4 rounded-xl border border-indigo-200 bg-indigo-50 hover:bg-indigo-100 disabled:bg-gray-100 disabled:text-gray-400 transition-colors"
+          className="w-full text-gray-700 text-sm font-semibold py-3 px-4 rounded-xl border border-gray-200 bg-white shadow-sm hover:bg-gray-50 disabled:bg-gray-100 disabled:text-gray-400 transition-colors flex items-center justify-center gap-2"
         >
           {isLocating ? "Mencari Lokasi..." : "📍 Gunakan Lokasi Saat Ini"}
         </button>
-      </div>
 
-      {/* INFO KOORDINAT */}
-      <div className="p-3 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-800">
-        <p className="font-semibold">Koordinat Terpilih:</p>
-        <p className="mt-1">
-          Lat: {markerPosition.lat.toFixed(6)}, Lng:{" "}
-          {markerPosition.lng.toFixed(6)}
-        </p>
+        {/* INFO KOORDINAT */}
+        <div className="flex justify-between items-center px-2 text-[10px] text-gray-400 font-mono">
+          <span>Lat: {markerPosition.lat.toFixed(6)}</span>
+          <span>Lng: {markerPosition.lng.toFixed(6)}</span>
+        </div>
       </div>
     </div>
   );

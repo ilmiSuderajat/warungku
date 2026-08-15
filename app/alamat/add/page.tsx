@@ -38,7 +38,7 @@ export default async function AlamatPage() {
           <h1 className="text-slate-700 text-xl ">Tambah Alamat Baru</h1>
         </div>
       </div>
-      <div className="w-[98%] mx-auto mt-2 ">
+      <div className="">
         <FormAlamatBaru userId={user?.id || ""} defaultCenter={initialCenter} />
       </div>
     </div>
