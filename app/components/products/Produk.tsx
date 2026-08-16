@@ -1,7 +1,7 @@
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
-import TombolKeranjang from "./pesanan/TombolKeranjang";
+import TombolKeranjang from "@/app/components/pesanan/TombolKeranjang";
 import { Star, MapPin } from "lucide-react";
 // Helper formatter
 function formatRupiah(angka: number) {
