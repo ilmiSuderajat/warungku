@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ProdukGambarSlider } from "@/app/components/ProdukGambarSlider";
+import { ProdukGambarSlider } from "@/app/components/products/ProdukGambarSlider";
 
 export default function GaleriProduk({
   urls,
