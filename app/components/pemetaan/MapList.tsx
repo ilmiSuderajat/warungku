@@ -2,7 +2,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { searchLokasi } from "../alamat/searchActions";
+import { searchLokasi } from "@/app/alamat/searchActions";
 
 type Lokasi = {
   id: string;
