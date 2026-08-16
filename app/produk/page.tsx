@@ -1,7 +1,7 @@
 import { createClient } from "@/utils/supabase/server";
 import Link from "next/link";
 import { Star, MapPin } from "lucide-react";
-import { ProdukGambarSlider } from "../components/ProdukGambarSlider";
+import { ProdukGambarSlider } from "../components/products/ProdukGambarSlider";
 
 function formatRupiah(angka: number) {
   return new Intl.NumberFormat("id-ID").format(angka);

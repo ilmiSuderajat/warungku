@@ -1,9 +1,9 @@
 import { createClient } from "@/utils/supabase/server";
-import { revalidatePath } from "next/cache";
-import FormCheckout from "@/app/components/FormCheckout";
 import { redirect } from "next/navigation";
-// Tambahan icon untuk mempercantik UI
 import { MapPin, ShoppingBag, Receipt } from "lucide-react";
+import FormCheckout from "@/app/components/pesanan/FormCheckout";
+// 1. PASTIKAN IMPORT KOMPONEN TOMBOL BAYAR MU DI SINI
+import TombolBayar from "@/app/components/pesanan/TombolBayar";
 
 type CheckoutItem = {
   id: string;
@@ -17,8 +17,8 @@ export default async function CheckoutPage({
   searchParams,
 }: {
   searchParams:
-  | Promise<{ productId?: string; source?: string; jumlah?: string }>
-  | { productId?: string; source?: string; jumlah?: string };
+    | Promise<{ productId?: string; source?: string; jumlah?: string }>
+    | { productId?: string; source?: string; jumlah?: string };
 }) {
   const params = await searchParams;
   const source = params.source ?? "langsung";
@@ -103,10 +103,10 @@ export default async function CheckoutPage({
     totalTagihan = produk.harga;
     maxStok = produk.stok;
   }
+
+  // SERVER ACTION ASLI (Tetap dibiarkan seperti ini)
   async function prosesBayar(jumlahDariForm: number) {
     "use server";
-    // Hapus import { redirect } dari file ini jika sudah tidak dipakai
-
     const supabaseServer = await createClient();
 
     if (source === "keranjang") {
@@ -133,6 +133,13 @@ export default async function CheckoutPage({
     return { success: true, message: "Pesanan berhasil dibuat!" };
   }
 
+  // 2. INI FUNGSI JEMBATANNYA UNTUK TOMBOL KERANJANG
+  // Fungsi ini dipanggil oleh TombolBayar. Dia tidak minta parameter apapun.
+  async function jembatanKeranjang() {
+    "use server";
+    // Dia memanggil fungsi asli dengan jumlah 0 (karena keranjang tidak butuh input jumlah)
+    return await prosesBayar(0);
+  }
   return (
     <div className="min-h-screen bg-gray-50/90 py-6 md:py-10">
       <div className="max-w-2xl mx-auto px-4 md:px-0">
@@ -208,19 +215,7 @@ export default async function CheckoutPage({
           {/* Area Tombol Bayar */}
           <div className="mt-6">
             {source === "keranjang" ? (
-              <form
-                action={async (formData: FormData) => {
-                  "use server";
-                  await prosesBayar(0);
-                }}
-              >
-                <button
-                  type="submit"
-                  className="w-full bg-indigo-600 hover:bg-indigo-700 active:scale-[0.99] text-white font-bold py-3.5 rounded-lg transition-all shadow-md shadow-indigo-600/20"
-                >
-                  Buat Pesanan
-                </button>
-              </form>
+              <TombolBayar action={jembatanKeranjang} />
             ) : (
               // Pastikan komponen FormCheckout Anda juga didesain senada dengan Tailwind agar menyatu dengan baik
               <FormCheckout prosesBayar={prosesBayar} stok={maxStok} />

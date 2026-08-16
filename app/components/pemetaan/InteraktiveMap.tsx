@@ -81,12 +81,12 @@ export default function InteractiveMap({
       {/* WRAPPER PETA (Diubah menjadi tinggi fix h-[220px] agar form di bawahnya lega) */}
       <div className="relative w-full h-55 overflow-hidden bg-gray-200">
         {/* TEKS OVERLAY (melayang di atas peta, dibuat ala notifikasi UI) */}
-        <div className="absolute top-0 left-0 w-full z-10 bg-white/95 backdrop-blur-sm px-4 py-2.5 shadow-sm border-b border-gray-100">
-          <div className="flex items-center gap-3">
-            <div className="shrink-0 rounded-full p-1.5 bg-orange-50">
-              <Bell className="w-4 h-4 text-orange-500" />
+        <div className="absolute top-0 left-0 w-full z-10 bg-yellow-100 backdrop-blur-sm px-4 py-2.5 shadow-sm border-b border-gray-100">
+          <div className="flex items-center gap-4 bg-yellow-100">
+            <div className="shrink-0 rounded-full p-1.5">
+              <Bell className="w-6 h-5 text-orange-500" />
             </div>
-            <p className="text-[11px] font-medium text-gray-700 leading-snug">
+            <p className="text-sm text-red-400 font-medium  leading-snug">
               Mohon periksa pin lokasimu, kami akan mengirimkan pesananmu sesuai
               pin lokasi.
             </p>

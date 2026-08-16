@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Sacramento, Arimo } from "next/font/google";
 import { Toaster } from "sonner";
-import BottomNav from "./components/BottomNav";
+import BottomNav from "./components/ui/BottomNav";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -49,4 +49,3 @@ export default function RootLayout({
     </html>
   );
 }
-

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { CheckCircle, ShoppingBag, ArrowRight, Home } from "lucide-react";
-import WaveDotLoader from "./WaveDotLoader";
+import WaveDotLoader from "../ui/WaveDotLoader";
 import Link from "next/link";
 
 interface OrderSuccessProps {
@@ -33,7 +33,7 @@ export default function OrderSuccess({ show }: OrderSuccessProps) {
 
   return (
     <div
-      className={`fixed inset-0 z-[200] flex items-center justify-center transition-all duration-500 ${
+      className={`fixed inset-0 z-200 flex items-center justify-center transition-all duration-500 ${
         visible ? "opacity-100" : "opacity-0"
       }`}
     >
@@ -47,7 +47,7 @@ export default function OrderSuccess({ show }: OrderSuccessProps) {
         }`}
       >
         {/* Top gradient accent bar */}
-        <div className="h-1.5 bg-gradient-to-r from-indigo-500 via-violet-500 to-purple-500" />
+        <div className="h-1.5 bg-linear-to-r from-indigo-500 via-violet-500 to-purple-500" />
 
         {/* ===== LOADING PHASE ===== */}
         {phase === "loading" && (
@@ -66,7 +66,11 @@ export default function OrderSuccess({ show }: OrderSuccessProps) {
             </h2>
 
             {/* Wave dot loader */}
-            <WaveDotLoader message="Mohon tunggu sebentar..." dotCount={5} color="indigo" />
+            <WaveDotLoader
+              message="Mohon tunggu sebentar..."
+              dotCount={5}
+              color="indigo"
+            />
           </div>
         )}
 
@@ -76,9 +80,10 @@ export default function OrderSuccess({ show }: OrderSuccessProps) {
             {/* Success icon with pop animation */}
             <div className="relative mb-5">
               <div
-                className="h-24 w-24 rounded-full bg-gradient-to-br from-emerald-400 to-green-500 flex items-center justify-center shadow-lg shadow-emerald-400/30"
+                className="h-24 w-24 rounded-full bg-linear-to-br from-emerald-400 to-green-500 flex items-center justify-center shadow-lg shadow-emerald-400/30"
                 style={{
-                  animation: "popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards",
+                  animation:
+                    "popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards",
                 }}
               >
                 <CheckCircle
@@ -88,13 +93,13 @@ export default function OrderSuccess({ show }: OrderSuccessProps) {
               </div>
               {/* Sparkle rings */}
               <div
-                className="absolute inset-[-8px] rounded-full border-2 border-emerald-200"
+                className="absolute inset-2 rounded-full border-2 border-emerald-200"
                 style={{
                   animation: "ringExpand 1s ease-out forwards",
                 }}
               />
               <div
-                className="absolute inset-[-16px] rounded-full border border-emerald-100"
+                className="absolute inset-4 rounded-full border border-emerald-100"
                 style={{
                   animation: "ringExpand 1s ease-out 0.15s forwards",
                   opacity: 0,
@@ -112,12 +117,13 @@ export default function OrderSuccess({ show }: OrderSuccessProps) {
               Pesanan Berhasil! 🎉
             </h2>
             <p
-              className="text-sm text-slate-500 text-center leading-relaxed mb-8 max-w-[260px]"
+              className="text-sm text-slate-500 text-center leading-relaxed mb-8 max-w-65"
               style={{
                 animation: "fadeUp 0.4s ease-out 0.45s both",
               }}
             >
-              Pesanan kamu sedang diproses oleh mitra kami. Pantau statusnya di halaman pesanan.
+              Pesanan kamu sedang diproses oleh mitra kami. Pantau statusnya di
+              halaman pesanan.
             </p>
 
             {/* Action buttons */}
@@ -129,7 +135,7 @@ export default function OrderSuccess({ show }: OrderSuccessProps) {
             >
               <Link
                 href="/pesanan"
-                className="flex items-center justify-center gap-2 w-full py-3.5 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-bold text-sm shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 active:scale-[0.98] transition-all"
+                className="flex items-center justify-center gap-2 w-full py-3.5 rounded-xl bg-linear-to-r from-indigo-600 to-violet-600 text-white font-bold text-sm shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 active:scale-[0.98] transition-all"
               >
                 Lihat Pesanan
                 <ArrowRight className="h-4 w-4" />

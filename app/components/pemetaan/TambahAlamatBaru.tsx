@@ -7,6 +7,7 @@ import InteractiveMap from "./InteraktiveMap";
 import { toast } from "sonner"; // Import sonner
 import { Loader2 } from "lucide-react"; // Import ikon loading
 import { useRouter } from "next/navigation";
+import { MoveLeft } from "lucide-react";
 interface FormAlamatBaruProps {
   userId: string;
   defaultCenter: { lat: number; lng: number };
@@ -85,6 +86,15 @@ export default function FormAlamatBaru({
 
   return (
     <div className="bg-[#f2f2f4]  min-h-screen relative font-sans text-gray-800 max-w-md mx-auto shadow-xl overflow-y-auto">
+      <div className="w-full bg-white/90 shadow-md sticky top-0 z-50">
+        <div className="flex  items-center gap-14 px-4 py-3 md:px-6 max-w-7xl mx-auto h-16 md:h-20">
+          <MoveLeft
+            onClick={() => router.back()}
+            className="w-8 h-10 text-indigo-600 transition-transform duration-100 ease-in-out active:scale-80"
+          />
+          <h1 className="text-slate-700 text-xl ">Tambah Alamat Baru</h1>
+        </div>
+      </div>
       <form
         id="addressForm"
         onSubmit={handleSubmit(onSubmit)}
@@ -336,7 +346,7 @@ export default function FormAlamatBaru({
           type="submit"
           form="addressForm"
           disabled={isSubmitting} // Nonaktifkan tombol saat loading
-          className="w-full bg-orange-500 hover:bg-orange-600 disabled:bg-orange-300 disabled:cursor-not-allowed text-white font-semibold py-3.5 rounded-xl transition-colors duration-200 flex items-center justify-center gap-2"
+          className="w-full bg-indigo-600 hover:to-blue-400 disabled:bg-orange-300 disabled:cursor-not-allowed text-white font-semibold py-3.5 rounded-xl flex items-center justify-center gap-2 transition-transform duration-100 ease-in-out active:scale-95"
         >
           {isSubmitting ? (
             <>

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, LayoutGrid, Bell, User } from "lucide-react";
+import { Home, LayoutGrid, Bell, User, Package } from "lucide-react";
 
 const navItems = [
   {
@@ -16,9 +16,9 @@ const navItems = [
     icon: LayoutGrid,
   },
   {
-    label: "Notifikasi",
-    href: "/notifikasi",
-    icon: Bell,
+    label: "Pesanan",
+    href: "/pesanan",
+    icon: Package,
   },
   {
     label: "Profil",

@@ -14,7 +14,7 @@ import {
   ChevronRight,
   AlertCircle,
 } from "lucide-react";
-import OrderSuccess from "@/app/components/OrderSuccess";
+import OrderSuccess from "@/app/components/pesanan/OrderSuccess";
 
 export interface PesananItem {
   id: string;
@@ -129,7 +129,7 @@ export default function PesananClient({ daftarPesanan }: PesananClientProps) {
       <OrderSuccess show={showSuccess} />
 
       {/* Header Banner */}
-      <div className="bg-gradient-to-r from-indigo-600 via-indigo-700 to-indigo-800 text-white p-5 sm:p-6">
+      <div className="bg-linear-to-r from-indigo-600 via-indigo-700 to-indigo-800 text-white p-5 sm:p-6">
         <div className="max-w-3xl mx-auto space-y-1">
           <div className="flex items-center gap-2">
             <Package className="w-6 h-6" />

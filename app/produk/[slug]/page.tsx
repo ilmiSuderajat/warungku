@@ -3,10 +3,10 @@ import { getTotalKeranjang } from "@/utils/cart";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import Link from "next/link";
-import TombolKeranjang from "@/app/components/TombolKeranjang";
+import TombolKeranjang from "@/app/components/pesanan/TombolKeranjang";
 import { Star, MapPin, Store, Clock, ChevronLeft } from "lucide-react";
-import SearchBar from "@/app/components/SearchBar";
-import GaleriProduk from "@/app/components/GaleriProduk";
+import SearchBar from "@/app/components/ui/SearchBar";
+import GaleriProduk from "@/app/components/products/GaleriProduk";
 
 function formatRupiah(angka: number) {
   return new Intl.NumberFormat("id-ID").format(angka);
@@ -104,7 +104,9 @@ export default async function DetailProdukPage({
             <div className="fixed bottom-0 left-0 w-full bg-white border-t border-gray-100 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-50 p-4">
               <div className="max-w-md mx-auto flex flex-row items-center justify-between gap-3">
                 <div className="w-14 h-12 shrink-0">
-                  <TombolKeranjang action={tambahKeranjang.bind(null, item.id)} />
+                  <TombolKeranjang
+                    action={tambahKeranjang.bind(null, item.id)}
+                  />
                 </div>
 
                 <form action={beliSekarang} className="flex-1">
@@ -175,4 +177,3 @@ export default async function DetailProdukPage({
     </div>
   );
 }
-
