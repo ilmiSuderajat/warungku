@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { useEffect, useState } from "react"; // Tambahkan useState
 import { tambahAlamat } from "@/app/alamat/viewModel";
 import { createClient } from "@/utils/supabase/client";
-import InteractiveMap from "./InteraktiveMap";
+import InteractiveMap from "@/app/components/pemetaan/InteraktiveMap";
 import { toast } from "sonner"; // Import sonner
 import { Loader2 } from "lucide-react"; // Import ikon loading
 import { useRouter } from "next/navigation";
