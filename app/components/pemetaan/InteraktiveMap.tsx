@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { GoogleMap, useJsApiLoader, Marker } from "@react-google-maps/api";
 import { Bell } from "lucide-react";
 
@@ -24,6 +24,16 @@ export default function InteractiveMap({
   const [markerPosition, setMarkerPosition] = useState(defaultCenter); // Untuk posisi pin
   const [mapCenter, setMapCenter] = useState(defaultCenter); // Untuk posisi kamera peta
 
+  const mapRef = useRef<google.maps.Map | null>(null);
+  const mapWrapperRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!mapWrapperRef.current || !mapRef.current) return;
+    const observer = new ResizeObserver(() => {
+      google.maps.event.trigger(mapRef.current!, "resize");
+    });
+    observer.observe(mapWrapperRef.current);
+    return () => observer.disconnect();
+  }, []);
   // State untuk efek loading di tombol
   const [isLocating, setIsLocating] = useState(false);
 
@@ -77,50 +87,64 @@ export default function InteractiveMap({
     );
 
   return (
-    <div className="flex flex-col w-full relative">
-      {/* WRAPPER PETA (Diubah menjadi tinggi fix h-[220px] agar form di bawahnya lega) */}
-      <div className="relative w-full h-55 overflow-hidden bg-gray-200">
-        {/* TEKS OVERLAY (melayang di atas peta, dibuat ala notifikasi UI) */}
-        <div className="absolute top-0 left-0 w-full z-10 bg-yellow-100 backdrop-blur-sm px-4 py-2.5 shadow-sm border-b border-gray-100">
-          <div className="flex items-center gap-4 bg-yellow-100">
-            <div className="shrink-0 rounded-full p-1.5">
-              <Bell className="w-6 h-5 text-orange-500" />
-            </div>
-            <p className="text-sm text-red-400 font-medium  leading-snug">
+    <div className="flex flex-col w-full">
+      {/* WRAPPER PETA — static, bukan sticky, biar tidak nimpa konten di bawah */}
+      <div
+        ref={mapWrapperRef}
+        className="relative w-full h-[clamp(160px,28dvh,220px)] overflow-hidden bg-gray-200 z-0"
+      >
+        <div className="absolute top-0 left-0 w-full z-10 bg-yellow-100 px-4 py-2 shadow-sm border-b border-gray-100">
+          <div className="flex items-center gap-3">
+            <Bell className="w-5 h-5 text-orange-500 shrink-0" />
+            <p className="text-xs sm:text-sm text-red-500 font-medium leading-snug">
               Mohon periksa pin lokasimu, kami akan mengirimkan pesananmu sesuai
               pin lokasi.
             </p>
           </div>
         </div>
 
-        {/* PETA */}
         <GoogleMap
-          mapContainerClassName="w-full h-full" // Diubah menjadi h-full agar mengikuti wrapper h-[220px]
+          mapContainerClassName="w-full h-full"
           center={mapCenter}
           zoom={18}
           onClick={handleMapClick}
+          onLoad={(map) => {
+            mapRef.current = map;
+          }}
           options={{
             mapTypeControl: false,
             streetViewControl: false,
             fullscreenControl: false,
+            zoomControl: false,
+            gestureHandling: "greedy",
+            clickableIcons: false,
           }}
         >
-          {markerPosition && <Marker position={markerPosition} />}
+          {markerPosition && (
+            <Marker
+              position={markerPosition}
+              draggable
+              onDragEnd={(e) => {
+                if (e.latLng) {
+                  handleMapClick({
+                    latLng: e.latLng,
+                  } as google.maps.MapMouseEvent);
+                }
+              }}
+            />
+          )}
         </GoogleMap>
       </div>
 
-      {/* WRAPPER KONTROL */}
-      <div className="p-3 bg-white border-b border-gray-100 space-y-3">
-        {/* TOMBOL */}
+      <div className="relative z-10 p-3 bg-white border-b border-gray-100 space-y-3">
         <button
           onClick={handleCurrentLocation}
           disabled={isLocating}
-          className="w-full text-gray-700 text-sm font-semibold py-3 px-4 rounded-xl border border-gray-200 bg-white shadow-sm hover:bg-gray-50 disabled:bg-gray-100 disabled:text-gray-400 transition-colors flex items-center justify-center gap-2"
+          className="w-full text-gray-700 text-sm font-semibold py-3 px-4 rounded-xl border border-gray-200 bg-white shadow-sm active:bg-gray-100 disabled:bg-gray-100 disabled:text-gray-400 transition-colors flex items-center justify-center gap-2"
         >
           {isLocating ? "Mencari Lokasi..." : "📍 Gunakan Lokasi Saat Ini"}
         </button>
 
-        {/* INFO KOORDINAT */}
         <div className="flex justify-between items-center px-2 text-[10px] text-gray-400 font-mono">
           <span>Lat: {markerPosition.lat.toFixed(6)}</span>
           <span>Lng: {markerPosition.lng.toFixed(6)}</span>

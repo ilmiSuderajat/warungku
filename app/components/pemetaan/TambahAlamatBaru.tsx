@@ -85,35 +85,39 @@ export default function FormAlamatBaru({
   };
 
   return (
-    <div className="bg-[#f2f2f4]  min-h-screen relative font-sans text-gray-800 max-w-md mx-auto shadow-xl overflow-y-auto">
-      <div className="w-full bg-white/90 shadow-md sticky top-0 z-50">
-        <div className="flex  items-center gap-14 px-4 py-3 md:px-6 max-w-7xl mx-auto h-16 md:h-20">
-          <MoveLeft
+    <div className="bg-[#f2f2f4] min-h-dvh relative font-sans text-gray-800 max-w-md mx-auto shadow-xl overflow-y-auto">
+      <div className="w-full bg-white/90 shadow-md fixed top-0 z-50">
+        <div className="flex items-center gap-3 px-4 py-3 h-16">
+          <button
+            type="button"
             onClick={() => router.back()}
-            className="w-8 h-10 text-indigo-600 transition-transform duration-100 ease-in-out active:scale-80"
-          />
-          <h1 className="text-slate-700 text-xl ">Tambah Alamat Baru</h1>
+            aria-label="Kembali"
+            className="w-11 h-11 -ml-2 flex items-center justify-center text-indigo-600 active:scale-90 transition-transform"
+          >
+            <MoveLeft className="w-6 h-6" />
+          </button>
+          <h1 className="text-slate-700 text-lg">Tambah Alamat Baru</h1>
         </div>
       </div>
+
       <form
         id="addressForm"
         onSubmit={handleSubmit(onSubmit)}
-        className="flex flex-col gap-2 p-1 pb-28"
+        className="flex flex-col gap-2 p-1 pb-32"
       >
         {/* Seksi Peta & Info Lokasi */}
-        <div className="bg-white w-full rounded-xl overflow-hidden border border-gray-100">
-          <div className="h-[35dvh] relative w-full bg-gray-200">
+        <div className="bg-white flex flex-col w-full rounded-xl overflow-hidden border border-gray-100 mt-18">
+          <div className=" w-full bg-gray-200">
             <InteractiveMap
-              defaultCenter={defaultCenter} // Menggunakan props dari parent sesuai kode asli
+              defaultCenter={defaultCenter}
               onLocationChange={(coords) => {
                 setValue("lat", coords.lat, { shouldValidate: true });
                 setValue("lng", coords.lng, { shouldValidate: true });
               }}
             />
           </div>
-
-          <div className="p-4 flex flex-col gap-4">
-            <div className="flex items-center justify-between cursor-pointer active:bg-gray-50 gap-2">
+          <div className="p-4 flex flex-col gap-3">
+            <div className="flex items-center justify-between gap-4">
               <div className="flex gap-3 items-start w-full">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -127,9 +131,9 @@ export default function FormAlamatBaru({
                     clipRule="evenodd"
                   />
                 </svg>
-                <div className="w-full">
+                <div className="w-full ">
                   <input
-                    className="font-bold text-gray-800 w-full outline-none bg-transparent placeholder-gray-400"
+                    className="font-bold text-base text-gray-800 w-full outline-none bg-transparent placeholder-gray-400"
                     placeholder="Nama Lokasi (Cth: RT.1/RW.4)"
                     {...register("namaLokasi", { required: true })}
                   />
@@ -138,7 +142,6 @@ export default function FormAlamatBaru({
                       Nama lokasi wajib diisi
                     </p>
                   )}
-                  {/* Teks statis ini bisa Anda ganti menjadi dinamis jika ada data kecamatan/desa dari Maps API */}
                   <p className="text-sm text-gray-500 mt-1 line-clamp-1">
                     Area lokasi yang dipilih
                   </p>
@@ -168,11 +171,11 @@ export default function FormAlamatBaru({
 
         {/* Seksi Detail Form */}
         <div className="bg-white rounded-xl p-4 space-y-6 border border-gray-100">
-          {/* Rincian Alamat */}
           <div>
             <input
-              className="w-full text-sm outline-none border-b border-gray-200 pb-2 focus:border-gray-400 transition-colors"
+              className="w-full text-base outline-none border-b border-gray-200 pb-2 focus:border-gray-400 transition-colors"
               placeholder="Rincian Alamat (Cth. Blok, No. Rumah, Patokan)"
+              autoComplete="address-line1"
               {...register("alamatLengkap", { required: "Alamat wajib diisi" })}
             />
             {errors.alamatLengkap && (
@@ -182,21 +185,20 @@ export default function FormAlamatBaru({
             )}
           </div>
 
-          {/* Alert Kuning */}
           <div className="bg-[#fff8e6] text-[#856404] text-xs p-3 rounded-md leading-relaxed">
             Masukkan No. Rumah (jika ada), agar Driver bisa mengantarkan pesanan
             dengan mudah
           </div>
 
-          {/* Nama Lengkap */}
           <div>
             <input
-              className={`w-full text-sm outline-none border-b pb-2 transition-colors ${
+              className={`w-full text-base outline-none border-b pb-2 transition-colors ${
                 errors.namaPenerima
                   ? "border-red-500 placeholder-red-400 text-red-500"
                   : "border-gray-200 focus:border-gray-400"
               }`}
               placeholder="Masukkan Nama Lengkap *"
+              autoComplete="name"
               {...register("namaPenerima", {
                 required: "Mohon masukkan nama lengkap",
               })}
@@ -208,14 +210,15 @@ export default function FormAlamatBaru({
             )}
           </div>
 
-          {/* No Handphone */}
           <div>
             <label className="text-xs text-gray-500 flex items-center gap-1">
               No. Handphone <span className="text-red-500">*</span>
             </label>
             <input
-              type="number"
-              className={`w-full text-sm outline-none border-b pb-2 mt-2 transition-colors ${
+              type="tel"
+              inputMode="numeric"
+              autoComplete="tel"
+              className={`w-full text-base outline-none border-b pb-2 mt-2 transition-colors ${
                 errors.noHp
                   ? "border-red-500 text-red-500"
                   : "border-gray-200 focus:border-gray-400"
@@ -223,7 +226,10 @@ export default function FormAlamatBaru({
               placeholder="Contoh: 628123456789"
               {...register("noHp", {
                 required: "Nomor HP wajib diisi",
-                valueAsNumber: true,
+                pattern: {
+                  value: /^[0-9]{9,15}$/,
+                  message: "Nomor HP tidak valid",
+                },
               })}
             />
             {errors.noHp && (
@@ -262,7 +268,7 @@ export default function FormAlamatBaru({
                 className="peer sr-only"
                 {...register("intruksiKhusus")}
               />
-              <div className="py-2.5 px-2 rounded-lg bg-[#f7f9fa] text-center text-sm text-gray-700 peer-checked:bg-orange-50 peer-checked:text-orange-600 peer-checked:border-orange-200 border border-transparent cursor-pointer transition-all">
+              <div className="py-3 px-2 rounded-lg bg-[#f7f9fa] text-center text-sm text-gray-700 peer-checked:bg-orange-50 peer-checked:text-orange-600 peer-checked:border-orange-200 border border-transparent cursor-pointer active:scale-95 transition-all">
                 Tinggalkan di pintu
               </div>
             </label>
@@ -273,23 +279,22 @@ export default function FormAlamatBaru({
                 className="peer sr-only"
                 {...register("intruksiKhusus")}
               />
-              <div className="py-2.5 px-2 rounded-lg bg-[#f7f9fa] text-center text-sm text-gray-700 peer-checked:bg-orange-50 peer-checked:text-orange-600 peer-checked:border-orange-200 border border-transparent cursor-pointer transition-all">
+              <div className="py-3 px-2 rounded-lg bg-[#f7f9fa] text-center text-sm text-gray-700 peer-checked:bg-orange-50 peer-checked:text-orange-600 peer-checked:border-orange-200 border border-transparent cursor-pointer active:scale-95 transition-all">
                 Serahkan ke saya
               </div>
             </label>
           </div>
 
           <textarea
-            className="w-full bg-[#f7f9fa] rounded-lg p-3 text-sm outline-none border border-transparent focus:border-gray-300 resize-none placeholder-gray-400"
+            className="w-full bg-[#f7f9fa] rounded-lg p-3 text-base outline-none border border-transparent focus:border-gray-300 resize-none placeholder-gray-400"
             rows={3}
             placeholder="Contoh: Titip di pos satpam, gunakan lift servis, atau hubungi saat sudah sampai"
             {...register("detailIntruksi")}
           ></textarea>
 
-          {/* Dummy Button Foto (Opsional, jika Anda belum mengimplementasikan upload foto) */}
           <button
             type="button"
-            className="w-16 h-16 border border-dashed border-gray-300 rounded-xl flex flex-col items-center justify-center text-gray-500 hover:bg-gray-50 transition-colors"
+            className="w-16 h-16 border border-dashed border-gray-300 rounded-xl flex flex-col items-center justify-center text-gray-500 active:bg-gray-100 transition-colors"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -316,10 +321,10 @@ export default function FormAlamatBaru({
         </div>
 
         {/* Seksi Ekstra (Label & Alamat Utama) */}
-        <div className="bg-white rounded-xl  p-4 space-y-4 border border-gray-100">
+        <div className="bg-white rounded-xl p-4 space-y-4 border border-gray-100">
           <div>
             <input
-              className="w-full text-sm outline-none border-b border-gray-200 pb-2 focus:border-gray-400"
+              className="w-full text-base outline-none border-b border-gray-200 pb-2 focus:border-gray-400"
               placeholder="Label (Contoh: Rumah / Kantor)"
               {...register("label", { required: "Label wajib diisi" })}
             />
@@ -329,10 +334,10 @@ export default function FormAlamatBaru({
               </p>
             )}
           </div>
-          <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+          <label className="flex items-center gap-2 text-sm text-gray-700 py-1 cursor-pointer">
             <input
               type="checkbox"
-              className="w-4 h-4 accent-orange-500 rounded"
+              className="w-5 h-5 accent-orange-500 rounded"
               {...register("isUtama")}
             />
             Jadikan alamat utama
@@ -340,13 +345,13 @@ export default function FormAlamatBaru({
         </div>
       </form>
 
-      {/* Footer Fixed Bar (Konfirmasi) - Harus berada diluar tag <form> */}
-      <div className="fixed bottom-0 max-w-md w-full bg-white p-3 border-t border-gray-100 z-50 shadow-[0_-5px_15px_rgba(0,0,0,0.03)]">
+      {/* Footer Fixed Bar */}
+      <div className="fixed bottom-0 max-w-md w-full mx-auto left-0 right-0 bg-white p-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] border-t border-gray-100 z-50 shadow-[0_-5px_15px_rgba(0,0,0,0.03)]">
         <button
           type="submit"
           form="addressForm"
-          disabled={isSubmitting} // Nonaktifkan tombol saat loading
-          className="w-full bg-indigo-600 hover:to-blue-400 disabled:bg-orange-300 disabled:cursor-not-allowed text-white font-semibold py-3.5 rounded-xl flex items-center justify-center gap-2 transition-transform duration-100 ease-in-out active:scale-95"
+          disabled={isSubmitting}
+          className="w-full bg-indigo-600 disabled:bg-orange-300 disabled:cursor-not-allowed text-white font-semibold py-3.5 rounded-xl flex items-center justify-center gap-2 active:scale-95 transition-transform"
         >
           {isSubmitting ? (
             <>

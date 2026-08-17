@@ -18,16 +18,13 @@ export default function AlamatCard({ data }: { data: Alamat[] }) {
     <div className="w-full min-h-screen bg-[#f5f5f5] flex flex-col">
       {/* 1. Header (Navbar) */}
       <div className="bg-white w-full h-14 flex items-center gap-3 px-3 sticky top-0 z-20 border-b border-gray-100">
-        <button
-          type="button"
+        <MoveLeft
           onClick={() => router.back()}
-          className="p-2 -ml-2 rounded-full hover:bg-gray-100 active:scale-90 transition-transform"
-        >
-          <MoveLeft className="w-5 h-5 text-gray-700" />
-        </button>
-        <h1 className="text-[16px] font-medium text-gray-800">
-          Alamat Pengantaran
-        </h1>
+          className="w-6 h-6 text-indigo-600 transition-transform duration-100 ease-in-out active:scale-80"
+        />
+        <div className="flex items-center gap-4 px-4 py-3 md:px-6 max-w-7xl mx-auto h-16 mr-20 md:h-20">
+          <h1 className="text-slate-700 text-lg ">Alamat Pengantaran</h1>
+        </div>
       </div>
 
       {/* 2. Container Utama */}
@@ -140,7 +137,7 @@ export default function AlamatCard({ data }: { data: Alamat[] }) {
         <div className="max-w-md mx-auto w-full p-3">
           <Link
             href="/alamat/add"
-            className="block w-full text-center bg-[#ee4d2d] text-white py-3 rounded-md font-medium text-[15px] active:bg-[#d73f22] transition-colors"
+            className="block w-full text-center bg-indigo-600 text-white py-3 rounded-md font-medium text-[15px] active:bg-indigo-400 transition-colors"
           >
             Tambah Alamat Baru
           </Link>

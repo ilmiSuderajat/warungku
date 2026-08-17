@@ -30,7 +30,7 @@ export default async function AlamatPage() {
 
   // 3. Render komponen Client dan lempar koordinatnya sebagai props
   return (
-    <div className="bg-gray-50/90 w-full min-h-screen ">
+    <div className="bg-gray-50/90  ">
       <div className="">
         <FormAlamatBaru userId={user?.id || ""} defaultCenter={initialCenter} />
       </div>
