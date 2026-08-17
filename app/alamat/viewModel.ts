@@ -101,3 +101,18 @@ export async function getSemuaLokasi(supabase: SupabaseClient) {
 
   return { data, error };
 }
+
+export type Alamat = {
+  id: string;
+  user_id: string;
+  label: string;
+  alamat_lengkap: string;
+  latitude: number;
+  longitude: number;
+  is_utama: boolean;
+  created_at: string;
+  nama_penerima: string;
+  no_hp: string;
+  intruksi_khusus: string;
+  detail_intruksi: string;
+};

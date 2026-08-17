@@ -1,4 +1,3 @@
-// app/alamat/page.tsx
 import { createClient } from "@/utils/supabase/server";
 import FormAlamatBaru from "@/app/components/pemetaan/TambahAlamatBaru";
 

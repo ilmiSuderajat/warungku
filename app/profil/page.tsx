@@ -1,5 +1,6 @@
 import { getProfile } from "@/src/viewmodels/data/profile";
 import ProfileCard from "@/app/components/profile/ProfileCard";
+import ItemList from "@/app/components/profile/ItemList";
 
 export default async function ProfilPage() {
   const dataProfile = await getProfile();
@@ -11,7 +12,7 @@ export default async function ProfilPage() {
     (Array.isArray(dataProfile) && dataProfile.length === 0)
   ) {
     return (
-      <div className="w-full min-h-screen bg-gray-50/90 flex justify-center items-center">
+      <div className="w-full min-h-screen bg-gray-50/80 text-black flex justify-center items-center">
         <p>Data profil belum tersedia.</p>
       </div>
     );
@@ -25,11 +26,9 @@ export default async function ProfilPage() {
     : dataProfile;
 
   return (
-    <div className="w-full min-h-screen bg-gray-50/90 ">
-      <div className="flex flex-col items-center bg-white/95 p-4">
-        {/* Langsung panggil komponennya tanpa .map() */}
-        <ProfileCard data={profilYangAkanDitampilkan} />
-      </div>
+    <div className=" bg-gray-50/90 ">
+      <ProfileCard data={profilYangAkanDitampilkan} />
+      <ItemList />
     </div>
   );
 }
