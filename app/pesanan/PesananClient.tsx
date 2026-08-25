@@ -13,9 +13,10 @@ import {
   ShoppingBag,
   ChevronRight,
   AlertCircle,
+  MoveLeft,
 } from "lucide-react";
 import OrderSuccess from "@/app/components/pesanan/OrderSuccess";
-
+import { useRouter } from "next/navigation";
 export interface PesananItem {
   id: string;
   created_at: string;
@@ -60,7 +61,7 @@ export default function PesananClient({ daftarPesanan }: PesananClientProps) {
   const statusParam = searchParams.get("status");
   const [showSuccess, setShowSuccess] = useState(false);
   const [activeTab, setActiveTab] = useState<string>("semua");
-
+  const router = useRouter();
   useEffect(() => {
     if (statusParam === "sukses") {
       setShowSuccess(true);
@@ -124,22 +125,22 @@ export default function PesananClient({ daftarPesanan }: PesananClientProps) {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-24">
+    <div className="min-h-screen bg-gray-50/90 pb-24">
       {/* Toast Animasi Loading & Sukses Overlay */}
       <OrderSuccess show={showSuccess} />
 
       {/* Header Banner */}
-      <div className="bg-linear-to-r from-indigo-600 via-indigo-700 to-indigo-800 text-white p-5 sm:p-6">
+      <div className="bg-indigo-800 text-white p-5 sm:p-6">
         <div className="max-w-3xl mx-auto space-y-1">
-          <div className="flex items-center gap-2">
-            <Package className="w-6 h-6" />
-            <h1 className="text-xl sm:text-2xl font-bold tracking-tight">
+          <div className="flex items-center gap-3 text-center">
+            <MoveLeft
+              onClick={() => router.back()}
+              className="w-6 h-6 text-white transition-transform duration-100 ease-in-out active:scale-80"
+            />
+            <h1 className="text-xl sm:text-2xl font-bold tracking-tight ml-15">
               Pesanan Saya
             </h1>
           </div>
-          <p className="text-xs sm:text-sm text-indigo-100">
-            Pantau status pesanan belanjaan Anda di sini secara real-time.
-          </p>
         </div>
       </div>
 
@@ -166,7 +167,7 @@ export default function PesananClient({ daftarPesanan }: PesananClientProps) {
 
         {/* List Pesanan */}
         {filteredPesanan.length === 0 ? (
-          <div className="bg-white/95 shadow-lg rounded-lg border border-gray-100 p-5 text-center space-y-4 my-6">
+          <div className="bg-white/95 rounded-lg border p-5 text-center space-y-4 my-6">
             <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto text-gray-500">
               <ShoppingBag className="w-8 h-8" />
             </div>
@@ -204,7 +205,7 @@ export default function PesananClient({ daftarPesanan }: PesananClientProps) {
               return (
                 <div
                   key={item.id}
-                  className="bg-white/95 shadow-lg rounded-lg border border-gray-100 p-5 space-y-4"
+                  className="bg-white/95 rounded-lg border border-gray-100 p-5 space-y-4"
                 >
                   {/* Top Bar: Date & Status */}
                   <div className="flex items-center justify-between pb-3 border-b border-gray-200">
@@ -280,6 +281,13 @@ export default function PesananClient({ daftarPesanan }: PesananClientProps) {
                     </div>
 
                     <div className="flex items-center gap-2">
+                      <Link
+                        href="/pesanan/detail"
+                        className="bg-gray-500 text-white text-center text-xs sm:text-sm font-semibold px-4 py-2 rounded-lg transition-all inline-flex items-center gap-1"
+                      >
+                        Detail
+                        <ChevronRight className="w-3.5 h-3.5" />
+                      </Link>
                       <Link
                         href={produk ? `/produk/${produk.id}` : "/produk"}
                         className="bg-indigo-600 hover:bg-indigo-700 text-white text-xs sm:text-sm font-semibold px-4 py-2 rounded-lg transition-all inline-flex items-center gap-1"

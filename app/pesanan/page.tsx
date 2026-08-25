@@ -2,7 +2,7 @@ import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import PesananClient, { PesananItem } from "./PesananClient";
 import { Suspense } from "react";
-import { Clock } from "lucide-react";
+import { PesananSkeleton } from "../components/ui/Skeleton";
 
 export default async function PesananPage() {
   const supabase = await createClient();
@@ -17,7 +17,8 @@ export default async function PesananPage() {
 
   const { data: pesanan, error } = await supabase
     .from("pesanan")
-    .select(`
+    .select(
+      `
       id,
       created_at,
       jumlah,
@@ -35,7 +36,8 @@ export default async function PesananPage() {
         label,
         alamat_lengkap
       )
-    `)
+    `,
+    )
     .eq("user_id", user.id)
     .order("created_at", { ascending: false });
 
@@ -47,24 +49,15 @@ export default async function PesananPage() {
     harga_satuan: item.harga_satuan,
     alasan_pembatalan: item.alasan_pembatalan,
     produk_mitra: Array.isArray(item.produk_mitra)
-      ? item.produk_mitra[0] ?? null
-      : item.produk_mitra ?? null,
+      ? (item.produk_mitra[0] ?? null)
+      : (item.produk_mitra ?? null),
     alamat: Array.isArray(item.alamat)
-      ? item.alamat[0] ?? null
-      : item.alamat ?? null,
+      ? (item.alamat[0] ?? null)
+      : (item.alamat ?? null),
   }));
 
   return (
-    <Suspense
-      fallback={
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-          <div className="flex items-center gap-2 text-gray-500">
-            <Clock className="w-5 h-5 animate-spin text-indigo-600" />
-            <span className="text-sm font-medium">Memuat pesanan Anda...</span>
-          </div>
-        </div>
-      }
-    >
+    <Suspense fallback={<PesananSkeleton />}>
       <PesananClient daftarPesanan={daftarPesanan} />
     </Suspense>
   );
