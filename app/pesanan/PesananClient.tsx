@@ -23,11 +23,13 @@ export interface PesananItem {
   jumlah: number;
   status_pesanan: string;
   harga_satuan: number | null;
+  no_pesanan: string;
   alasan_pembatalan: string | null;
   produk_mitra: {
     id: string;
     nama_produk: string;
     harga: number;
+    slug: string;
     gambar_urls?: string[];
   } | null;
   alamat: {
@@ -125,7 +127,7 @@ export default function PesananClient({ daftarPesanan }: PesananClientProps) {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50/90 pb-24">
+    <div className="w-full min-h-screen bg-gray-50/90 pb-24">
       {/* Toast Animasi Loading & Sukses Overlay */}
       <OrderSuccess show={showSuccess} />
 
@@ -144,7 +146,7 @@ export default function PesananClient({ daftarPesanan }: PesananClientProps) {
         </div>
       </div>
 
-      <div className="max-w-3xl mx-auto px-4 pt-4 space-y-4">
+      <div className="max-w-3xl mx-auto px-1 pt-2 space-y-4">
         {/* Navigation Tabs */}
         <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
           {tabs.map((tab) => {
@@ -167,7 +169,7 @@ export default function PesananClient({ daftarPesanan }: PesananClientProps) {
 
         {/* List Pesanan */}
         {filteredPesanan.length === 0 ? (
-          <div className="bg-white/95 rounded-lg border p-5 text-center space-y-4 my-6">
+          <div className="bg-white/95 rounded-lg border p-2 text-center space-y-4 my-6">
             <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto text-gray-500">
               <ShoppingBag className="w-8 h-8" />
             </div>
@@ -192,7 +194,7 @@ export default function PesananClient({ daftarPesanan }: PesananClientProps) {
             </div>
           </div>
         ) : (
-          <div className="space-y-4">
+          <div className="space-y-2">
             {filteredPesanan.map((item) => {
               const produk = item.produk_mitra;
               const hargaSatuan = item.harga_satuan ?? produk?.harga ?? 0;
@@ -205,13 +207,13 @@ export default function PesananClient({ daftarPesanan }: PesananClientProps) {
               return (
                 <div
                   key={item.id}
-                  className="bg-white/95 rounded-lg border border-gray-100 p-5 space-y-4"
+                  className="w-full bg-white/95 rounded-lg border border-gray-100 p-2 space-y-4"
                 >
                   {/* Top Bar: Date & Status */}
                   <div className="flex items-center justify-between pb-3 border-b border-gray-200">
                     <div className="space-y-0.5">
                       <p className="text-xs font-semibold text-gray-900">
-                        No. Pesanan #{item.id.slice(0, 8).toUpperCase()}
+                        `No Pesanan #{item.no_pesanan}
                       </p>
                       <p className="text-xs text-gray-500">
                         {formatDate(item.created_at)}
@@ -221,7 +223,7 @@ export default function PesananClient({ daftarPesanan }: PesananClientProps) {
                   </div>
 
                   {/* Product Info */}
-                  <div className="flex items-start gap-4">
+                  <div className="flex items-start ml-5 gap-4">
                     <div className="w-16 h-16 rounded-lg bg-gray-100 border border-gray-200 overflow-hidden shrink-0 flex items-center justify-center">
                       {gambarUrl ? (
                         <img
@@ -272,7 +274,7 @@ export default function PesananClient({ daftarPesanan }: PesananClientProps) {
                     )}
 
                   {/* Bottom Bar: Total & Actions */}
-                  <div className="flex items-center justify-between pt-3 border-t border-gray-200">
+                  <div className="flex ml-2 items-center justify-between border-t border-gray-200">
                     <div>
                       <p className="text-xs text-gray-500">Total Pembayaran</p>
                       <p className="text-sm sm:text-base font-bold text-gray-900">
@@ -280,16 +282,18 @@ export default function PesananClient({ daftarPesanan }: PesananClientProps) {
                       </p>
                     </div>
 
-                    <div className="flex items-center gap-2">
+                    <div className="flex mt-2 p-2 items-center gap-2">
                       <Link
-                        href="/pesanan/detail"
+                        href={`/pesanan/${item.id}`}
                         className="bg-gray-500 text-white text-center text-xs sm:text-sm font-semibold px-4 py-2 rounded-lg transition-all inline-flex items-center gap-1"
                       >
                         Detail
                         <ChevronRight className="w-3.5 h-3.5" />
                       </Link>
                       <Link
-                        href={produk ? `/produk/${produk.id}` : "/produk"}
+                        href={
+                          produk?.slug ? `/produk/${produk.slug}` : "/produk"
+                        }
                         className="bg-indigo-600 hover:bg-indigo-700 text-white text-xs sm:text-sm font-semibold px-4 py-2 rounded-lg transition-all inline-flex items-center gap-1"
                       >
                         Beli Lagi

@@ -1,4 +1,13 @@
-import { LayoutGrid, ShoppingBag, MapPin, Wallet, Store, Truck, Headphones, CreditCard } from "lucide-react";
+import {
+  LayoutGrid,
+  ShoppingBag,
+  MapPin,
+  Wallet,
+  Store,
+  Truck,
+  Headphones,
+  CreditCard,
+} from "lucide-react";
 import Link from "next/link";
 
 const layananItems = [
@@ -64,7 +73,7 @@ export default function LayananPage() {
   return (
     <div className="min-h-screen bg-slate-50/70 pb-24">
       {/* Header */}
-      <div className="bg-gradient-to-r from-orange-500 via-amber-500 to-orange-600 px-4 pt-12 pb-10 text-white">
+      <div className="bg-linear-to-r from-orange-500 via-amber-500 to-orange-600 px-4 pt-12 pb-10 text-white">
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center gap-3 mb-1">
             <LayoutGrid className="w-6 h-6" />

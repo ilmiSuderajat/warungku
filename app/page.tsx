@@ -1,8 +1,6 @@
 import { getTotalKeranjang } from "@/utils/cart";
 import BannerPromo from "./components/products/BannerPromo";
-import DataKeranjang from "./components/pesanan/DataKeranjang";
 import KategoriCard from "./components/products/KategoriCard";
-import Produk from "./components/products/Produk";
 import SearchBar from "./components/ui/SearchBar";
 import TopCard from "./components/ui/TopCard";
 import ProdukPage from "./produk/page";
