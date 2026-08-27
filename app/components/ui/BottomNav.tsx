@@ -38,7 +38,7 @@ export default function BottomNav() {
     "/produk/",
     "/wallet",
     "/alamat",
-    "/pesanan/detail",
+    "/pesanan",
   ];
   const shouldHide = hiddenRoutes.some((route) => pathname.startsWith(route));
   if (shouldHide) return null;

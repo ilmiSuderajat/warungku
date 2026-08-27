@@ -213,7 +213,7 @@ export default function PesananClient({ daftarPesanan }: PesananClientProps) {
                   <div className="flex items-center justify-between pb-3 border-b border-gray-200">
                     <div className="space-y-0.5">
                       <p className="text-xs font-semibold text-gray-900">
-                        `No Pesanan #{item.no_pesanan}
+                        No Pesanan #{item.no_pesanan}
                       </p>
                       <p className="text-xs text-gray-500">
                         {formatDate(item.created_at)}
