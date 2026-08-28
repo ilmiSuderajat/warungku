@@ -10,7 +10,6 @@ export default async function PageDetail({
   if (!pesananData) {
     return (
       <div>
-        <Detail datapesanan={[pesananData]} />;
         <div>Pesanan tidak ditemukan</div>;
       </div>
     );

@@ -23,8 +23,13 @@ type PesananDetail = {
   harga_satuan: number | null;
   no_pesanan: string;
   produk_mitra:
-    | { nama_produk: string; harga: number; slug: string }
-    | { nama_produk: string; harga: number; slug: string }[]
+    | { nama_produk: string; harga: number; slug: string; gambar_urls: string }
+    | {
+        nama_produk: string;
+        harga: number;
+        slug: string;
+        gambar_urls: string;
+      }[]
     | null;
   alamat:
     | { label: string; alamat_lengkap: string }
@@ -102,11 +107,15 @@ export default function Detail({
   const bolehDibatalkan = item.status_pesanan.toLowerCase() === "menunggu";
   const sedangDiproses = item.status_pesanan.toLowerCase() === "diproses";
   const sudahDibatalkan = item.status_pesanan.toLowerCase() === "dibatalkan";
+  const gambarUrl =
+    produk?.gambar_urls && produk.gambar_urls.length > 0
+      ? produk.gambar_urls[0]
+      : null;
 
   async function handleCancel() {
     const toastId = toast.custom(
       (id) => (
-        <div className="w-full max-w-sm rounded-lg border border-gray-200 bg-white p-5 shadow-lg">
+        <div className="w-full max-w-sm rounded-lg border border-gray-200 bg-white p-2 shadow-lg">
           <p className="font-bold text-gray-900">Batalkan pesanan?</p>
           <p className="mt-1 text-sm text-gray-500">
             Pesanan yang dibatalkan tidak dapat diproses kembali.
@@ -141,7 +150,7 @@ export default function Detail({
     return toastId;
   }
   return (
-    <main className="min-h-screen bg-gray-50 pb-28 text-gray-900">
+    <main className="min-h-screen bg-gray-50/80 pb-28 text-gray-900">
       <header className="bg-indigo-600 p-5 text-white sm:p-6">
         <div className="mx-auto flex max-w-3xl items-center gap-3">
           <button
@@ -159,8 +168,8 @@ export default function Detail({
       </header>
 
       {(bolehDibatalkan || sedangDiproses) && (
-        <div className="mx-auto max-w-3xl px-2 pt-4 sm:px-6">
-          <div className="flex items-start gap-2 rounded-lg border border-red-600 bg-white/95 p-3 text-sm text-red-600 shadow-lg">
+        <div className="mx-auto max-w-3xl px-2 pt-1 sm:px-6">
+          <div className="flex items-start gap-2 rounded-lg border border-red-600 bg-white/95 p-3 text-sm text-red-600 ">
             <XCircle className="mt-0.5 h-4 w-4 shrink-0" />
             <p>
               {sedangDiproses
@@ -171,26 +180,35 @@ export default function Detail({
         </div>
       )}
 
-      <div className="mx-auto max-w-3xl space-y-4 p-2 sm:p-6">
-        <section className="space-y-4 rounded-lg border border-gray-100 bg-white/95 p-5 shadow-lg sm:p-6">
+      <div className="mx-auto max-w-3xl space-y-2 p-2 sm:p-6">
+        <section className="space-y-4 rounded-lg border border-gray-100/80 bg-white/95 p-2  sm:p-6">
           <StatusInfo status={item.status_pesanan} />
           <div className="flex items-start gap-3">
-            <Package className="mt-0.5 h-5 w-5 shrink-0 text-indigo-600" />
+            <div className="w-16 h-16 rounded-lg bg-gray-100 border border-gray-200 overflow-hidden shrink-0 flex items-center justify-center">
+              {gambarUrl ? (
+                <img
+                  src={gambarUrl}
+                  alt={produk?.nama_produk || "Produk"}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <Package className="w-8 h-8 text-gray-500" />
+              )}
+            </div>
             <div className="min-w-0">
-              <h2 className="font-bold text-gray-900">
-                {produk?.nama_produk ?? "Produk tidak tersedia"}
-              </h2>
+              <h2 className="font-bold text-gray-900">item</h2>
               <p className="text-sm text-gray-500">
-                {item.jumlah} barang x Rp {formatRupiah(hargaSatuan)}
+                {item.jumlah} {produk?.nama_produk ?? "Produk tidak tersedia"} x
+                Rp {formatRupiah(hargaSatuan)}
               </p>
             </div>
           </div>
-          <p className="border-t border-gray-200 pt-3 text-xs text-gray-500">
+          <p className="border-t  border-gray-200 pt-3 text-xs text-gray-500">
             Dibuat {formatDate(item.created_at)}
           </p>
         </section>
 
-        <section className="space-y-4 rounded-lg border border-gray-100 bg-white/95 p-5 shadow-lg sm:p-6">
+        <section className="space-y-4 rounded-lg border border-gray-100 bg-white/95 p-2  sm:p-6">
           <div className="flex items-center gap-2 border-b border-gray-200 pb-3">
             <MapPin className="h-5 w-5 text-indigo-600" />
             <h2 className="font-bold">Alamat Pengiriman</h2>
@@ -209,7 +227,7 @@ export default function Detail({
           )}
         </section>
 
-        <section className="space-y-4 rounded-lg border border-gray-100 bg-white/95 p-5 shadow-lg sm:p-6">
+        <section className="space-y-4 rounded-lg border border-gray-100 bg-white/95 p-2  sm:p-6">
           <div className="flex items-center gap-2 border-b border-gray-200 pb-3">
             <ReceiptText className="h-5 w-5 text-indigo-600" />
             <h2 className="font-bold">Informasi Pembayaran</h2>
