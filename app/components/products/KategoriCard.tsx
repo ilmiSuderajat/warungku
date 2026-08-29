@@ -15,52 +15,52 @@ import {
 const categories = [
   {
     id: 1,
-    name: "Jajanan Pinggir Jalan",
+    name: "Jastip",
     icon: Road,
-    color: "text-orange-600",
-    bg: "bg-orange-100",
+    color: "text-gray-100",
+    bg: "bg-indigo-600",
   },
   {
     id: 2,
     name: "Rumahan",
     icon: Home,
-    color: "text-emerald-600",
-    bg: "bg-emerald-100",
+    color: "text-white",
+    bg: "bg-emerald-600",
   },
   {
     id: 3,
     name: "Pedas",
     icon: Flame,
-    color: "text-red-600",
-    bg: "bg-red-100",
+    color: "text-white",
+    bg: "bg-red-600",
   },
   {
     id: 4,
     name: "Segar",
     icon: CupSoda,
-    color: "text-blue-600",
-    bg: "bg-blue-100",
+    color: "text-white",
+    bg: "bg-blue-600",
   },
   {
     id: 5,
     name: "Kenyang",
     icon: UtensilsCrossed,
-    color: "text-amber-600",
-    bg: "bg-amber-100",
+    color: "text-white",
+    bg: "bg-amber-600",
   },
   {
     id: 6,
     name: "Manis",
     icon: CakeSlice,
-    color: "text-pink-600",
-    bg: "bg-pink-100",
+    color: "text-white",
+    bg: "bg-pink-600",
   },
   {
     id: 7,
     name: "Lihat Semua",
     icon: Grid2X2,
-    color: "text-gray-50",
-    bg: "bg-indigo-400",
+    color: "text-white",
+    bg: "bg-indigo-800",
   },
 ];
 
@@ -83,18 +83,13 @@ export default function KategoriCard() {
   };
 
   return (
-    <div className="w-[96%] max-w-2xl mx-auto mt-1 bg-white/90 rounded-xl border border-gray-100 py-3 px-3">
-      <h2 className="text-sm font-bold text-gray-800 mb-3 px-1">
-        Eksplor Jajanan
-      </h2>
-
+    <div className="w-[96%] max-w-2xl mx-auto mt-1 bg-white rounded-xl border border-gray-100 py-3 px-3">
       {/* Container horizontal scroll */}
       <div
         ref={scrollRef}
         onScroll={handleScroll}
         // Ditambahkan snap-x agar pergeseran lebih mulus dan presisi
-        className="flex overflow-x-auto snap-x snap-mandatory gap-2"
-        style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+        className="flex overflow-x-auto flex-nowrap gap-x-2 no-scrollbar scroll-smooth"
       >
         <style jsx>{`
           div::-webkit-scrollbar {
@@ -112,11 +107,11 @@ export default function KategoriCard() {
               onClick={() => console.log(`Filter kategori: ${cat.name}`)}
             >
               <div
-                className={`w-10 h-10 rounded-full flex items-center justify-center ${cat.bg} ${cat.color}`}
+                className={`w-12 h-12 rounded-xl flex items-center justify-center shadow-sm opacity: 1; transform: none; ${cat.bg} ${cat.color}`}
               >
                 <Icon size={26} strokeWidth={2} />
               </div>
-              <span className="text-[11px] font-medium text-gray-700 text-center leading-tight">
+              <span className=" text-slate-700 text-[10px] text-center font-medium leading-[1.1] h-7 flex items-start justify-center px-1 overflow-hidden line-clamp-2">
                 {cat.name}
               </span>
             </button>

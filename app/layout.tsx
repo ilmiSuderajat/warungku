@@ -29,6 +29,11 @@ const arimo = Arimo({
 export const metadata: Metadata = {
   title: "WarungKita",
   description: "belanja instan jadi mudah",
+  icons: {
+    icon: "/warungkita-logo.svg",
+    shortcut: "/warungkita-logo.svg",
+    apple: "/warungkita-logo.svg",
+  },
 };
 
 export default function RootLayout({

@@ -151,31 +151,6 @@ export default async function WalletPage() {
     <main className="min-h-screen bg-gray-50 pb-24">
       <div className="max-w-2xl mx-auto px-4 py-5 space-y-4">
         {/* User Profile Bar */}
-        <header className="bg-white shadow-lg rounded-lg border border-gray-100 p-5 flex items-center justify-between gap-3">
-          <div className="flex items-center gap-3 min-w-0">
-            <div className="w-10 h-10 rounded-full bg-indigo-600 text-white font-bold text-sm flex items-center justify-center shrink-0">
-              {getInitial(viewModel.user.email)}
-            </div>
-            <div className="min-w-0 space-y-0.5">
-              <div className="flex items-center gap-1.5">
-                <p className="text-xs font-semibold text-gray-500">
-                  E-Wallet WarungKita
-                </p>
-                <span className="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700">
-                  <ShieldCheck className="w-3 h-3" />
-                  Aktif
-                </span>
-              </div>
-              <h1 className="text-sm sm:text-base font-bold text-gray-900 truncate">
-                {viewModel.user.email}
-              </h1>
-            </div>
-          </div>
-
-          <div className="shrink-0">
-            <LogoutButton />
-          </div>
-        </header>
 
         {/* Saldo Hero Card (Solid Indigo, No Gradient, No Backdrop Blur) */}
         <section className="bg-indigo-600 text-white shadow-lg rounded-lg p-5 space-y-4">

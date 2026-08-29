@@ -22,12 +22,13 @@ export async function tambahAlamat(
   namaPenerima: string,
   noHp: string,
   intruksiKhusus: string,
-  detailIntruksi: String,
+  detailIntruksi: string,
+  patokanFotoUrl?: string | null,
 ) {
   const { data, error } = await supabase.rpc("simpan_alamat_dan_sumbang", {
     p_user_id: userId,
     p_label: label,
-    p_nama_alamat: namaLokasi, // ini yang disumbang ke lokasi_referensi
+    p_nama_alamat: namaLokasi,
     p_alamat_lengkap: alamatLengkap,
     p_is_utama: isUtama,
     p_lat: koordinat.lat,
@@ -38,7 +39,36 @@ export async function tambahAlamat(
     p_detail_intruksi: detailIntruksi,
   });
 
-  return { data, error };
+  if (error) {
+    return { data, error };
+  }
+
+  if (patokanFotoUrl) {
+    const { data: latestAlamat, error: findError } = await supabase
+      .from("alamat")
+      .select("id")
+      .eq("user_id", userId)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (findError) {
+      return { data, error: findError };
+    }
+
+    if (latestAlamat?.id) {
+      const { error: updateError } = await supabase
+        .from("alamat")
+        .update({ patokan_foto_url: patokanFotoUrl })
+        .eq("id", latestAlamat.id);
+
+      if (updateError) {
+        return { data, error: updateError };
+      }
+    }
+  }
+
+  return { data, error: null };
 }
 
 export async function setAlamatUtama(
@@ -115,4 +145,5 @@ export type Alamat = {
   no_hp: string;
   intruksi_khusus: string;
   detail_intruksi: string;
+  patokan_foto_url?: string | null;
 };

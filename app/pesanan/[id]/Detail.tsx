@@ -150,7 +150,7 @@ export default function Detail({
     return toastId;
   }
   return (
-    <main className="min-h-screen bg-gray-50/80 pb-28 text-gray-900">
+    <main className="min-h-screen bg-gray-100 pb-28 text-gray-900">
       <header className="bg-indigo-600 p-5 text-white sm:p-6">
         <div className="mx-auto flex max-w-3xl items-center gap-3">
           <button

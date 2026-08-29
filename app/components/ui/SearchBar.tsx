@@ -96,7 +96,7 @@ export default function SearchBar({ totalItem = 0 }: { totalItem?: number }) {
     );
   }
   return (
-    <div className="w-full bg-indigo-800 shadow-md sticky top-0 z-50">
+    <div className="w-full bg-indigo-800 shadow-xs sticky top-0 z-50">
       {/* Inner Container: Dibatasi lebarnya agar rapi di layar besar */}
       <div className="flex items-center gap-4 px-4 py-3 md:px-6 max-w-7xl mx-auto h-16 md:h-20">
         {/* Logo */}

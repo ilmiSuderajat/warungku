@@ -30,19 +30,17 @@ const navItems = [
 export default function BottomNav() {
   const pathname = usePathname();
 
-  // Halaman yang tidak perlu menampilkan bottom nav (misalnya checkout, login, mitra, detail produk)
-  const hiddenRoutes = [
-    "/checkout",
-    "/login",
-    "/mitra",
-    "/produk/",
-    "/wallet",
-    "/alamat",
-    "/pesanan",
-  ];
-  const shouldHide = hiddenRoutes.some((route) => pathname.startsWith(route));
-  if (shouldHide) return null;
+  // 1. Rute yang disembunyikan HANYA JIKA URL-nya persis sama
+  const exactHiddenRoutes = ["/checkout", "/login", "/mitra", "/wallet"];
 
+  // 2. Rute yang disembunyikan jika URL DIAWALI dengan kata ini
+  const dynamicHiddenRoutes = ["/alamat/", "/pesanan/"];
+
+  const shouldHide =
+    exactHiddenRoutes.includes(pathname) ||
+    dynamicHiddenRoutes.some((route) => pathname.startsWith(route));
+
+  if (shouldHide) return null;
   return (
     <>
       {/* Spacer agar konten tidak tertutup oleh bottom nav */}
@@ -50,7 +48,7 @@ export default function BottomNav() {
 
       <nav className="fixed bottom-0 left-0 right-0 z-100 sm:hidden">
         {/* Blur backdrop & top border */}
-        <div className="absolute inset-0 bg-white/90 backdrop-blur-xl border-t border-slate-200/80" />
+        <div className="absolute inset-0 bg-white backdrop-blur-xl border-t border-slate-200/80" />
 
         <div className="relative flex items-stretch justify-around px-2 h-17">
           {navItems.map((item) => {

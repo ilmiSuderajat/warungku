@@ -127,26 +127,26 @@ export default function PesananClient({ daftarPesanan }: PesananClientProps) {
   ];
 
   return (
-    <div className="w-full min-h-screen bg-gray-50/90 pb-24">
+    <div className="w-full min-h-screen bg-gray-100 pb-24">
       {/* Toast Animasi Loading & Sukses Overlay */}
       <OrderSuccess show={showSuccess} />
 
       {/* Header Banner */}
-      <div className="bg-indigo-800 text-white p-5 sm:p-6">
-        <div className="max-w-3xl mx-auto space-y-1">
-          <div className="flex items-center gap-3 text-center">
+      <div className="fixed left-0 right-0 top-0 z-50 bg-indigo-800 text-white shadow-sm">
+        <div className="max-w-3xl mx-auto px-6 py-6 sm:px-6 sm:py-5">
+          <div className="flex items-center gap-23">
             <MoveLeft
               onClick={() => router.back()}
               className="w-6 h-6 text-white transition-transform duration-100 ease-in-out active:scale-80"
             />
-            <h1 className="text-xl sm:text-2xl font-bold tracking-tight ml-15">
+            <h1 className="text-xl sm:text-2xl font-bold tracking-tight">
               Pesanan Saya
             </h1>
           </div>
         </div>
       </div>
 
-      <div className="max-w-3xl mx-auto px-1 pt-2 space-y-4">
+      <div className="max-w-3xl mx-auto px-1 pt-24 sm:pt-24 space-y-4">
         {/* Navigation Tabs */}
         <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
           {tabs.map((tab) => {
